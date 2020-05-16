@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AWSSDK.EC2" Version="3.5.0-beta" />
+      <PackageReference Include="Dynamitey" Version="2.0.10.189" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CsvLibrary\CsvLibrary.csproj" />
+    </ItemGroup>
+
+</Project>
