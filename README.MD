@@ -9,6 +9,7 @@
   + [Rds](#rds)
   + [Lambda](#lambda)
   + [S3](#se)
+* [General parameters](#general-parameters)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -86,12 +87,12 @@ Default filename `ec2Tags.csv`
 Example:
  `awstaghelper s3 tag-s3 --filename ec2Tag.csv --profile main`  
 
-### General parameters
+## General parameters
 
-`filename` - path where to write or read data. Supported by every option
-`tags` - list of tags to read. Supported only with `get-tags` option
-`region` - aws region to use. Supported by every option
-`profile` - aws profile to use. Supported by every option
+`filename` - path where to write or read data. Supported by every option  
+`tags` - list of tags to read. Supported only with `get-tags` option  
+`region` - aws region to use. Supported by every option  
+`profile` - aws profile to use. Supported by every option  
 
 ## Contributing
 
