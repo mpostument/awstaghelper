@@ -33,11 +33,11 @@ var lambdaCmd = &cobra.Command{
 
 var getLambdaCmd = &cobra.Command{
 	Use:   "get-lambda-tags",
-	Short: "Write ec2 id and required tags to csv",
-	Long: `Write to csv data with ec2 id and required tags to csv. 
-This csv can be used with tag-ec2 command to tag aws environment.
+	Short: "Write lambda id and required tags to csv",
+	Long: `Write to csv data with lambda id and required tags to csv. 
+This csv can be used with tag-lambda command to tag aws environment.
 Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
-Csv filename can be specified with flag filename. Default ec2Tags.csv`,
+Csv filename can be specified with flag filename. Default lambdaTags.csv`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tags, _ := cmd.Flags().GetString("tags")
 		filename, _ := cmd.Flags().GetString("filename")

@@ -11,6 +11,7 @@
   * [Rds](#rds)
   * [Lambda](#lambda)
   * [S3](#s3)
+  * [ElastiCache](#elasticache)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -93,6 +94,23 @@ Read csv and tag s3 - `awstaghelper s3 tag-s3`
 Default filename `ec2Tags.csv`  
 Example:
  `awstaghelper s3 tag-s3 --filename ec2Tag.csv --profile main`  
+ 
+### Elasticache
+
+#### Get elasticache tags
+
+Get list of s3 with required tags - `awstaghelper elasticache get-elasticache-tags`  
+Default filename `elasticacheTags.csv`  
+Default tags list `Environment,Project`  
+Example:
+`awstaghelper elasticache get-elasticache-tags --filename elasticacheTag.csv --tags Name,Owner --profile main`
+
+#### Tag s3
+
+Read csv and tag s3 - `awstaghelper elasticache tag-elasticache`  
+Default filename `elasticacheTags.csv`  
+Example:
+`awstaghelper elasticache tag-elasticache --filename elasticacheTag.csv --profile main`  
 
 ## Global parameters
 
