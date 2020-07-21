@@ -8,14 +8,19 @@
   * [Ec2](#ec2)
   * [Rds](#rds)
   * [Lambda](#lambda)
-  * [S3](#se)
+  * [S3](#s3)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
 
 ## Overview
 
+Painless AWS tagging
+![](awstaghelper.gif)
+
 ## Installing
+
+Download the latest binary from [releases](https://github.com/mpostument/awstaghelper/releases)
 
 ## Getting Started
 
@@ -92,7 +97,7 @@ Example:
 `filename` - path where to write or read data. Supported by every option  
 `tags` - list of tags to read. Supported only with `get-tags` option  
 `region` - aws region to use. Supported by every option  
-`profile` - aws profile to use. Supported by every option  
+`profile` - aws profile to use. Supported by every option.  
 
 ## Contributing
 
