@@ -17,55 +17,55 @@ package cmd
 
 import (
 	"awstaghelper/modules/common"
-	"awstaghelper/modules/rdsHelper"
+	"awstaghelper/modules/elastiCacheHelper"
 	"github.com/spf13/cobra"
 )
 
-// rdsCmd represents the rds command
-var rdsCmd = &cobra.Command{
-	Use:   "rds",
-	Short: "Root command for interaction with AWS rds services",
-	Long:  `Root command for interaction with AWS rds services.`,
+// elasticacheCmd represents the elasticache command
+var elasticacheCmd = &cobra.Command{
+	Use:   "elasticache",
+	Short: "Root command for interaction with AWS elasticache services",
+	Long: `Root command for interaction with AWS elasticache services.`,
 	//Run: func(cmd *cobra.Command, args []string) {
-	//	fmt.Println("rds called")
+	//	fmt.Println("elasticache called")
 	//},
 }
 
-var getRdsCmd = &cobra.Command{
-	Use:   "get-rds-tags",
-	Short: "Write rds arn and required tags to csv",
-	Long: `Write to csv data with rds arn and required tags to csv. 
-This csv can be used with tag-rds command to tag aws environment.
+var getElastiCacheCmd = &cobra.Command{
+	Use:   "get-elasticache-tags",
+	Short: "Write elasticache arn and required tags to csv",
+	Long: `Write to csv data with elasticache arn and required tags to csv. 
+This csv can be used with tag-elasticache command to tag aws environment.
 Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
-Csv filename can be specified with flag filename. Default rdsTags.csv`,
+Csv filename can be specified with flag filename. Default elasticacheTags.csv`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tags, _ := cmd.Flags().GetString("tags")
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
-		common.WriteCsv(rdsHelper.ParseRdsTags(tags, *sess), filename)
+		common.WriteCsv(elastiCacheHelper.ParseElastiCacheTags(tags, *sess), filename)
 	},
 }
 
-var tagRdsCmd = &cobra.Command{
-	Use:   "tag-rds",
-	Short: "Read csv and tag rds with csv data",
-	Long:  `Read csv generated with get-rds-tags command and tag rds instances with tags from csv.`,
+var tagElastiCacheCmd = &cobra.Command{
+	Use:   "tag-elasticache",
+	Short: "Read csv and tag elasticache with csv data",
+	Long:  `Read csv generated with get-elasticache-tags command and tag elasticache instances with tags from csv.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
 		csvData := common.ReadCsv(filename)
-		rdsHelper.TagRds(csvData, *sess)
+		elastiCacheHelper.TagElasticache(csvData, *sess)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(rdsCmd)
-	rdsCmd.AddCommand(getRdsCmd)
-	rdsCmd.AddCommand(tagRdsCmd)
-	rdsCmd.PersistentFlags().StringP("tags", "t", "Name,Environment", "Tags you want to read")
-	rdsCmd.PersistentFlags().StringP("filename", "f", "rdsTags.csv", "Filename where to store write")
+	rootCmd.AddCommand(elasticacheCmd)
+	elasticacheCmd.AddCommand(getElastiCacheCmd)
+	elasticacheCmd.AddCommand(tagElastiCacheCmd)
+	elasticacheCmd.PersistentFlags().StringP("tags", "t", "Name,Environment", "Tags you want to read")
+	elasticacheCmd.PersistentFlags().StringP("filename", "f", "elasticacheTags.csv", "Filename where to store write")
 }
