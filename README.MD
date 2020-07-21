@@ -1,8 +1,10 @@
 # Awstaghelper
 
+### Painless AWS tagging
+
 ## Table of Contents
 
-* [Overview](#overview)
+* [Usage Example](#usage-example)
 * [Installing](#installing)
 * [Getting Started](#getting-started)
   * [Ec2](#ec2)
@@ -13,9 +15,9 @@
 * [Contributing](#contributing)
 * [License](#license)
 
-## Overview
+## Usage example
 
-Painless AWS tagging
+
 ![](awstaghelper.gif)
 
 ## Installing
