@@ -48,7 +48,22 @@ Csv filename can be specified with flag filename.`,
 	},
 }
 
+var tagRedshifCmd = &cobra.Command{
+	Use:   "tag-redshift",
+	Short: "Read csv and tag redshift with csv data",
+	Long:  `Read csv generated with get-redshift-tags command and tag redshift instances with tags from csv.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := common.GetSession(region, profile)
+		csvData := common.ReadCsv(filename)
+		redshiftHelper.TagRedsfhit(csvData, *sess)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(redshiftCmd)
 	redshiftCmd.AddCommand(getRedshiftCmd)
+	redshiftCmd.AddCommand(tagRedshifCmd)
 }

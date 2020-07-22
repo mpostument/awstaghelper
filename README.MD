@@ -2,6 +2,8 @@
 
 ### Painless AWS tagging
 
+awstaghelper allow tagging hundreds of AWS resources in few commands
+
 ## Table of Contents
 
 * [Usage Example](#usage-example)
@@ -12,6 +14,7 @@
   * [Lambda](#lambda)
   * [S3](#s3)
   * [ElastiCache](#elasticache)
+  * [Redshift](#redshift)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -91,11 +94,25 @@ Get list of s3 with required tags - `awstaghelper elasticache get-elasticache-ta
 Example:
 `awstaghelper elasticache get-elasticache-tags --filename elasticacheTag.csv --tags Name,Owner --profile main`
 
-#### Tag s3
+#### Tag elasticache
 
 Read csv and tag s3 - `awstaghelper elasticache tag-elasticache`  
 Example:
 `awstaghelper elasticache tag-elasticache --filename elasticacheTag.csv --profile main`  
+
+### Redshift
+
+#### Get redshift tags
+
+Get list of redshift with required tags - `awstaghelper redshift get-redshift-tags`  
+Example:
+`awstaghelper redshift get-redshift-tags --filename redshiftTag.csv --tags Name,Owner --profile main`
+
+#### Tag redshift
+
+Read csv and tag redshift - `awstaghelper redshift tag-redshift`  
+Example:
+`awstaghelper redshift tag-redshift --filename redshiftTag.csv --profile main`  
 
 ## Global parameters
 
