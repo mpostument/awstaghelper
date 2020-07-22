@@ -17,25 +17,25 @@ package cmd
 
 import (
 	"awstaghelper/modules/common"
-	"awstaghelper/modules/ec2Helper"
+	"awstaghelper/modules/redshiftHelper"
 	"github.com/spf13/cobra"
 )
 
-// ec2Cmd represents the ec2 command
-var ec2Cmd = &cobra.Command{
-	Use:   "ec2",
-	Short: "Root command for interaction with AWS ec2 services",
-	Long:  `Root command for interaction with AWS ec2 services.`,
+// redshiftCmd represents the redshift command
+var redshiftCmd = &cobra.Command{
+	Use:   "redshift",
+	Short: "Root command for interaction with AWS redshfit services",
+	Long:  `Root command for interaction with AWS redshfit services.`,
 	//Run: func(cmd *cobra.Command, args []string) {
-	//	fmt.Println("ec2 called")
+	//	fmt.Println("redshift called")
 	//},
 }
 
-var getEc2Cmd = &cobra.Command{
-	Use:   "get-ec2-tags",
-	Short: "Write ec2 id and required tags to csv",
-	Long: `Write to csv data with ec2 id and required tags to csv. 
-This csv can be used with tag-ec2 command to tag aws environment.
+var getRedshiftCmd = &cobra.Command{
+	Use:   "get-redshift-tags",
+	Short: "Write redshift id and required tags to csv",
+	Long: `Write to csv data with redshift id and required tags to csv. 
+This csv can be used with tag-redshift command to tag aws environment.
 Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
 Csv filename can be specified with flag filename.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -44,26 +44,26 @@ Csv filename can be specified with flag filename.`,
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
-		common.WriteCsv(ec2Helper.ParseEc2Tags(tags, *sess), filename)
+		common.WriteCsv(redshiftHelper.ParseRedshiftTags(tags, *sess), filename)
 	},
 }
 
-var tagEc2Cmd = &cobra.Command{
-	Use:   "tag-ec2",
-	Short: "Read csv and tag ec2 with csv data",
-	Long:  `Read csv generated with get-ec2-tags command and tag ec2 instances with tags from csv.`,
+var tagRedshifCmd = &cobra.Command{
+	Use:   "tag-redshift",
+	Short: "Read csv and tag redshift with csv data",
+	Long:  `Read csv generated with get-redshift-tags command and tag redshift instances with tags from csv.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
 		csvData := common.ReadCsv(filename)
-		ec2Helper.TagEc2(csvData, *sess)
+		redshiftHelper.TagRedsfhit(csvData, *sess)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(ec2Cmd)
-	ec2Cmd.AddCommand(getEc2Cmd)
-	ec2Cmd.AddCommand(tagEc2Cmd)
+	rootCmd.AddCommand(redshiftCmd)
+	redshiftCmd.AddCommand(getRedshiftCmd)
+	redshiftCmd.AddCommand(tagRedshifCmd)
 }

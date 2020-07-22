@@ -37,7 +37,7 @@ var getS3Cmd = &cobra.Command{
 	Long: `Write to csv data with rds arn and required tags to csv. 
 This csv can be used with tag-s3 command to tag aws environment.
 Specify list of tags which should be read using tags flag: --tags Env,Project.
-Csv filename can be specified with flag filename. Default s3Tags.csv`,
+Csv filename can be specified with flag filename.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tags, _ := cmd.Flags().GetString("tags")
 		filename, _ := cmd.Flags().GetString("filename")
@@ -66,6 +66,4 @@ func init() {
 	rootCmd.AddCommand(s3Cmd)
 	s3Cmd.AddCommand(getS3Cmd)
 	s3Cmd.AddCommand(tagS3Cmd)
-	s3Cmd.PersistentFlags().StringP("tags", "t", "Environment,Project", "Tags you want to read")
-	s3Cmd.PersistentFlags().StringP("filename", "f", "s3Tags.csv", "Filename where to store write")
 }
