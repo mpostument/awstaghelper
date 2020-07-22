@@ -32,15 +32,12 @@ Download the latest binary from [releases](https://github.com/mpostument/awstagh
 #### Get ec2 tags
 
 Get list of ec2 with required tags - `awstaghelper ec2 get-ec2-tags`  
-Default filename `ec2Tags.csv`  
-Default tags list `Name,Environment`  
 Example:
  `awstaghelper ec2 get-ec2-tags --filename ec2Tag.csv --tags Name,Owner --profile main`
 
 #### Tag ec2
 
 Read csv and tag ec2 - `awstaghelper ec2 tag-ec2`  
-Default filename `ec2Tags.csv`  
 Example:
  `awstaghelper ec2 tag-ec2 --filename ec2Tag.csv --profile main`  
 
@@ -49,15 +46,12 @@ Example:
 #### Get rds tags
 
 Get list of rds with required tags - `awstaghelper rds get-rds-tags`  
-Default filename `rdsTags.csv`  
-Default tags list `Name,Environment`  
 Example:
  `awstaghelper rds get-rds-tags --filename rdsTag.csv --tags Name,Owner --profile main`
 
 #### Tag rds
 
 Read csv and tag rds - `awstaghelper rds tag-rds`  
-Default filename `rdsTags.csv`  
 Example:
  `awstaghelper rds tag-rds --filename rdsTag.csv --profile main`  
 
@@ -66,15 +60,12 @@ Example:
 #### Get lambda tags
 
 Get list of lambda with required tags - `awstaghelper lambda get-lambda-tags`  
-Default filename `lambdaTags.csv`  
-Default tags list `Name,Environment`  
 Example:
  `awstaghelper lambda get-lambda-tags --filename lambdaTag.csv --tags Name,Owner --profile main`
 
 #### Tag lambda
 
 Read csv and tag lambda - `awstaghelper lambda tag-lambda`  
-Default filename `lambdaTags.csv`  
 Example:
  `awstaghelper lambda tag-lambda --filename lambdaTag.csv --profile main`  
 
@@ -83,15 +74,12 @@ Example:
 #### Get s3 tags
 
 Get list of s3 with required tags - `awstaghelper s3 get-s3-tags`  
-Default filename `s3Tags.csv`  
-Default tags list `Environment,Project`  
 Example:
  `awstaghelper s3 get-s3-tags --filename s3Tag.csv --tags Name,Owner --profile main`
 
 #### Tag s3
 
 Read csv and tag s3 - `awstaghelper s3 tag-s3`  
-Default filename `ec2Tags.csv`  
 Example:
  `awstaghelper s3 tag-s3 --filename ec2Tag.csv --profile main`  
  
@@ -100,24 +88,21 @@ Example:
 #### Get elasticache tags
 
 Get list of s3 with required tags - `awstaghelper elasticache get-elasticache-tags`  
-Default filename `elasticacheTags.csv`  
-Default tags list `Environment,Project`  
 Example:
 `awstaghelper elasticache get-elasticache-tags --filename elasticacheTag.csv --tags Name,Owner --profile main`
 
 #### Tag s3
 
 Read csv and tag s3 - `awstaghelper elasticache tag-elasticache`  
-Default filename `elasticacheTags.csv`  
 Example:
 `awstaghelper elasticache tag-elasticache --filename elasticacheTag.csv --profile main`  
 
 ## Global parameters
 
-`filename` - path where to write or read data. Supported by every option  
-`tags` - list of tags to read. Supported only with `get-tags` option  
-`region` - aws region to use. Supported by every option  
-`profile` - aws profile to use. Supported by every option.  
+`filename` - path where to write or read data. Supported by every option. Default `awsTags.csv`  
+`tags` - list of tags to read. Supported only with `get-tags` option. Default `Name,Environment`  
+`region` - aws region to use. Supported by every option. Default `us-east-1`  
+`profile` - aws profile to use. Supported by every option. Default `default`  
 
 ## Contributing
 

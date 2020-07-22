@@ -58,7 +58,7 @@ func init() {
 	rootCmd.PersistentFlags().StringP("profile", "p", "default", "AWS profile name")
 	rootCmd.PersistentFlags().StringP("region", "r", "us-east-1", "AWS region")
 	rootCmd.PersistentFlags().StringP("tags", "t", "Name,Environment", "Tags you want to read")
-	rootCmd.PersistentFlags().StringP("filename", "f", "ec2Tags.csv", "Filename where to store write")
+	rootCmd.PersistentFlags().StringP("filename", "f", "awsTags.csv", "Filename where to store write")
 }
 
 // initConfig reads in config file and ENV variables if set.

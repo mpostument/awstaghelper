@@ -37,7 +37,7 @@ var getElastiCacheCmd = &cobra.Command{
 	Long: `Write to csv data with elasticache arn and required tags to csv. 
 This csv can be used with tag-elasticache command to tag aws environment.
 Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
-Csv filename can be specified with flag filename. Default elasticacheTags.csv`,
+Csv filename can be specified with flag filename.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tags, _ := cmd.Flags().GetString("tags")
 		filename, _ := cmd.Flags().GetString("filename")
