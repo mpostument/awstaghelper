@@ -66,6 +66,4 @@ func init() {
 	rootCmd.AddCommand(ec2Cmd)
 	ec2Cmd.AddCommand(getEc2Cmd)
 	ec2Cmd.AddCommand(tagEc2Cmd)
-	ec2Cmd.PersistentFlags().StringP("tags", "t", "Name,Environment", "Tags you want to read")
-	ec2Cmd.PersistentFlags().StringP("filename", "f", "ec2Tags.csv", "Filename where to store write")
 }

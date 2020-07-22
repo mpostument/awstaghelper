@@ -66,6 +66,4 @@ func init() {
 	rootCmd.AddCommand(s3Cmd)
 	s3Cmd.AddCommand(getS3Cmd)
 	s3Cmd.AddCommand(tagS3Cmd)
-	s3Cmd.PersistentFlags().StringP("tags", "t", "Environment,Project", "Tags you want to read")
-	s3Cmd.PersistentFlags().StringP("filename", "f", "s3Tags.csv", "Filename where to store write")
 }

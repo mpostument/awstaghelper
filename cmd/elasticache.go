@@ -25,7 +25,7 @@ import (
 var elasticacheCmd = &cobra.Command{
 	Use:   "elasticache",
 	Short: "Root command for interaction with AWS elasticache services",
-	Long: `Root command for interaction with AWS elasticache services.`,
+	Long:  `Root command for interaction with AWS elasticache services.`,
 	//Run: func(cmd *cobra.Command, args []string) {
 	//	fmt.Println("elasticache called")
 	//},
@@ -66,6 +66,4 @@ func init() {
 	rootCmd.AddCommand(elasticacheCmd)
 	elasticacheCmd.AddCommand(getElastiCacheCmd)
 	elasticacheCmd.AddCommand(tagElastiCacheCmd)
-	elasticacheCmd.PersistentFlags().StringP("tags", "t", "Name,Environment", "Tags you want to read")
-	elasticacheCmd.PersistentFlags().StringP("filename", "f", "elasticacheTags.csv", "Filename where to store write")
 }

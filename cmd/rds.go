@@ -66,6 +66,4 @@ func init() {
 	rootCmd.AddCommand(rdsCmd)
 	rdsCmd.AddCommand(getRdsCmd)
 	rdsCmd.AddCommand(tagRdsCmd)
-	rdsCmd.PersistentFlags().StringP("tags", "t", "Name,Environment", "Tags you want to read")
-	rdsCmd.PersistentFlags().StringP("filename", "f", "rdsTags.csv", "Filename where to store write")
 }
