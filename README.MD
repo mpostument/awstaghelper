@@ -15,6 +15,7 @@ awstaghelper allow tagging hundreds of AWS resources in few commands
   * [S3](#s3)
   * [ElastiCache](#elasticache)
   * [Redshift](#redshift)
+  * [ElasticSearch](#elasticsearch)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -113,6 +114,20 @@ Example:
 Read csv and tag redshift - `awstaghelper redshift tag-redshift`  
 Example:
 `awstaghelper redshift tag-redshift --filename redshiftTag.csv --profile main`  
+
+### ElasticSearch
+
+#### Get elasticsearch tags
+
+Get list of elasticsearch with required tags - `awstaghelper elasticsearch get-elasticsearch-tags`  
+Example:
+`awstaghelper elasticsearch get-elasticsearch-tags --filename elasticsearchTag.csv --tags Name,Owner --profile main`
+
+#### Tag elasticsearch
+
+Read csv and tag elasticsearch - `awstaghelper elasticsearch tag-elasticsearch`  
+Example:
+`awstaghelper elasticsearch tag-elasticsearch --filename elasticsearchTag.csv --profile main` 
 
 ## Global parameters
 
