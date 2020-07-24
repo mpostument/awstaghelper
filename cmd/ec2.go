@@ -60,7 +60,8 @@ var tagEc2Cmd = &cobra.Command{
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
 		csvData := common.ReadCsv(filename)
-		ec2Helper.TagEc2(csvData, *sess)
+		client := ec2.New(sess)
+		ec2Helper.TagEc2(csvData, client)
 	},
 }
 
