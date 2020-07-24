@@ -1,17 +1,15 @@
 package ec2Helper
 
 import (
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 	"log"
 	"strings"
 )
 
 // getInstances return all ec2 instances from specified region
-func getInstances(session session.Session) []*ec2.Reservation {
-	client := ec2.New(&session)
+func getInstances(client ec2iface.EC2API) []*ec2.Reservation {
 	input := &ec2.DescribeInstancesInput{}
-	//result, err := client.DescribeInstances(input)
 
 	var result []*ec2.Reservation
 
@@ -27,8 +25,8 @@ func getInstances(session session.Session) []*ec2.Reservation {
 }
 
 // ParseEc2Tags parse output from getInstances and return instances id and specified tags.
-func ParseEc2Tags(tagsToRead string, session session.Session) [][]string {
-	instancesOutput := getInstances(session)
+func ParseEc2Tags(tagsToRead string, client ec2iface.EC2API) [][]string {
+	instancesOutput := getInstances(client)
 	var rows [][]string
 	headers := []string{"Id"}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)
