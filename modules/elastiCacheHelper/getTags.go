@@ -3,16 +3,16 @@ package elastiCacheHelper
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/elasticache"
+	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"log"
 	"strings"
 )
 
 // getInstances return all ElastiCache from specified region
-func getInstances(session session.Session) []*elasticache.CacheCluster {
-	client := elasticache.New(&session)
+func getInstances(client elasticacheiface.ElastiCacheAPI) []*elasticache.CacheCluster {
 	input := &elasticache.DescribeCacheClustersInput{}
 
 	var result []*elasticache.CacheCluster
@@ -30,10 +30,8 @@ func getInstances(session session.Session) []*elasticache.CacheCluster {
 }
 
 // ParseElastiCacheTags parse output from getInstances and return arn and specified tags.
-func ParseElastiCacheTags(tagsToRead string, session session.Session) [][]string {
-	instancesOutput := getInstances(session)
-	client := elasticache.New(&session)
-	stsClient := sts.New(&session)
+func ParseElastiCacheTags(tagsToRead string, client elasticacheiface.ElastiCacheAPI, stsClient stsiface.STSAPI, region string) [][]string {
+	instancesOutput := getInstances(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
 		log.Fatal("Not able to get elasticache tags", err)
@@ -45,7 +43,7 @@ func ParseElastiCacheTags(tagsToRead string, session session.Session) [][]string
 	for _, elasticCacheInstance := range instancesOutput {
 
 		clusterArn := fmt.Sprintf("arn:aws:elasticache:%s:%s:cluster:%s",
-			*session.Config.Region, *callerIdentity.Account, *elasticCacheInstance.CacheClusterId)
+			region, *callerIdentity.Account, *elasticCacheInstance.CacheClusterId)
 
 		input := &elasticache.ListTagsForResourceInput{
 			ResourceName: aws.String(clusterArn),

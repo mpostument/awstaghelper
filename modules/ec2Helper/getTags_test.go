@@ -27,42 +27,7 @@ func TestGetInstances(t *testing.T) {
 		},
 	}
 
-	expectedResult := []*ec2.Reservation{
-		{
-			Instances: []*ec2.Instance{
-				{
-					InstanceId: aws.String("i-666666"),
-					Tags: []*ec2.Tag{
-						{
-							Key:   aws.String("Name"),
-							Value: aws.String("TestInstance1"),
-						},
-						{
-							Key:   aws.String("Environment"),
-							Value: aws.String("Test"),
-						},
-					},
-				},
-				{
-					InstanceId: aws.String("i-777777"),
-					Tags: []*ec2.Tag{
-						{
-							Key:   aws.String("Name"),
-							Value: aws.String("TestInstance2"),
-						},
-						{
-							Key:   aws.String("Environment"),
-							Value: aws.String("Test"),
-						},
-						{
-							Key:   aws.String("Owner"),
-							Value: aws.String("mpostument"),
-						},
-					},
-				},
-			},
-		},
-	}
+	expectedResult := parseTagsResponse.Reservations
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
 			result := getInstances(c)
