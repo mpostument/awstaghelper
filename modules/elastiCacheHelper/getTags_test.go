@@ -10,11 +10,6 @@ import (
 	"testing"
 )
 
-type mockedDescribeCacheClustersPages struct {
-	elasticacheiface.ElastiCacheAPI
-	resp elasticache.DescribeCacheClustersOutput
-}
-
 type mockedListTagsForResource struct {
 	elasticacheiface.ElastiCacheAPI
 	stsiface.STSAPI

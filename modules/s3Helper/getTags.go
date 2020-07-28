@@ -3,15 +3,14 @@ package s3Helper
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"log"
 	"strings"
 )
 
 // getBuckets return all s3 buckets from specified region
-func getBuckets(session session.Session) *s3.ListBucketsOutput {
-	client := s3.New(&session)
+func getBuckets(client s3iface.S3API) *s3.ListBucketsOutput {
 	input := &s3.ListBucketsInput{}
 
 	result, err := client.ListBuckets(input)
@@ -23,9 +22,8 @@ func getBuckets(session session.Session) *s3.ListBucketsOutput {
 }
 
 // ParseS3Tags parse output from getBuckets and return instances id and specified tags.
-func ParseS3Tags(tagsToRead string, session session.Session) [][]string {
-	s3Output := getBuckets(session)
-	client := s3.New(&session)
+func ParseS3Tags(tagsToRead string, client s3iface.S3API) [][]string {
+	s3Output := getBuckets(client)
 	var rows [][]string
 	headers := []string{"Name"}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)
@@ -36,7 +34,7 @@ func ParseS3Tags(tagsToRead string, session session.Session) [][]string {
 			if err.(awserr.Error).Code() == "NoSuchTagSet" {
 				fmt.Println("Tag set for bucket", *bucket.Name, "doesn't exist")
 			} else if err.(awserr.Error).Code() == "AuthorizationHeaderMalformed" {
-				fmt.Println("Bucket ", *bucket.Name, "is not in", *client.Config.Region, "region")
+				fmt.Println("Bucket ", *bucket.Name, "is not in your region", "region")
 			} else {
 				fmt.Println("Not able to get tags", err)
 			}
