@@ -34,8 +34,8 @@ func TestGetBuckets(t *testing.T) {
 	for _, c := range cases {
 		t.Run("GetBuckets", func(t *testing.T) {
 			result := getBuckets(c)
-			assert := assert.New(t)
-			assert.EqualValues(expectedResult, result)
+			assertions := assert.New(t)
+			assertions.EqualValues(expectedResult, result)
 		})
 
 	}
@@ -57,8 +57,8 @@ func TestParseS3Tags(t *testing.T) {
 	for _, c := range cases {
 		t.Run("ParseS3Tags", func(t *testing.T) {
 			result := ParseS3Tags("Owner,Environment", c)
-			assert := assert.New(t)
-			assert.EqualValues(expectedResult, result)
+			assertions := assert.New(t)
+			assertions.EqualValues(expectedResult, result)
 		})
 
 	}

@@ -31,8 +31,8 @@ func TestGetInstances(t *testing.T) {
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
 			result := getInstances(c)
-			assert := assert.New(t)
-			assert.EqualValues(expectedResult, result)
+			assertions := assert.New(t)
+			assertions.EqualValues(expectedResult, result)
 		})
 
 	}
@@ -52,8 +52,8 @@ func TestParseEc2Tags(t *testing.T) {
 	for _, c := range cases {
 		t.Run("ParseEc2Tags", func(t *testing.T) {
 			result := ParseEc2Tags("Name,Environment,Owner", c)
-			assert := assert.New(t)
-			assert.EqualValues(expectedResult, result)
+			assertions := assert.New(t)
+			assertions.EqualValues(expectedResult, result)
 		})
 	}
 }

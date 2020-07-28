@@ -43,8 +43,8 @@ func TestGetInstances(t *testing.T) {
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
 			result := getInstances(c)
-			assert := assert.New(t)
-			assert.EqualValues(expectedResult, result)
+			assertions := assert.New(t)
+			assertions.EqualValues(expectedResult, result)
 		})
 
 	}
@@ -67,8 +67,8 @@ func TestParseElastiCacheTags(t *testing.T) {
 	for _, c := range cases {
 		t.Run("ParseElastiCacheTags", func(t *testing.T) {
 			result := ParseElastiCacheTags("Name,Owner", c, c, "us-east-1")
-			assert := assert.New(t)
-			assert.EqualValues(expectedResult, result)
+			assertions := assert.New(t)
+			assertions.EqualValues(expectedResult, result)
 		})
 
 	}
