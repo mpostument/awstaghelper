@@ -34,7 +34,7 @@ func ParseElastiCacheTags(tagsToRead string, client elasticacheiface.ElastiCache
 	instancesOutput := getInstances(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
-		log.Fatal("Not able to get elasticache tags", err)
+		log.Fatal("Not able to get account id", err)
 	}
 	var rows [][]string
 	headers := []string{"Arn"}

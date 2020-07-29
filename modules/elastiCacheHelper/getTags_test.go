@@ -10,31 +10,31 @@ import (
 	"testing"
 )
 
-type mockedListTagsForResource struct {
+type mockedElasticacheSts struct {
 	elasticacheiface.ElastiCacheAPI
 	stsiface.STSAPI
-	resp                    elasticache.TagListMessage
-	respSts                 sts.GetCallerIdentityOutput
-	respCacheClustersOutput elasticache.DescribeCacheClustersOutput
+	respTagList               elasticache.TagListMessage
+	respGetCallerIdentity     sts.GetCallerIdentityOutput
+	respDescribeCacheClusters elasticache.DescribeCacheClustersOutput
 }
 
-func (m *mockedListTagsForResource) DescribeCacheClustersPages(input *elasticache.DescribeCacheClustersInput, pageFunc func(*elasticache.DescribeCacheClustersOutput, bool) bool) error {
-	pageFunc(&m.respCacheClustersOutput, true)
+func (m *mockedElasticacheSts) DescribeCacheClustersPages(input *elasticache.DescribeCacheClustersInput, pageFunc func(*elasticache.DescribeCacheClustersOutput, bool) bool) error {
+	pageFunc(&m.respDescribeCacheClusters, true)
 	return nil
 }
 
-func (m *mockedListTagsForResource) GetCallerIdentity(*sts.GetCallerIdentityInput) (*sts.GetCallerIdentityOutput, error) {
-	return &m.respSts, nil
+func (m *mockedElasticacheSts) GetCallerIdentity(*sts.GetCallerIdentityInput) (*sts.GetCallerIdentityOutput, error) {
+	return &m.respGetCallerIdentity, nil
 }
 
-func (m *mockedListTagsForResource) ListTagsForResource(*elasticache.ListTagsForResourceInput) (*elasticache.TagListMessage, error) {
-	return &m.resp, nil
+func (m *mockedElasticacheSts) ListTagsForResource(*elasticache.ListTagsForResourceInput) (*elasticache.TagListMessage, error) {
+	return &m.respTagList, nil
 }
 
 func TestGetInstances(t *testing.T) {
-	cases := []*mockedListTagsForResource{
+	cases := []*mockedElasticacheSts{
 		{
-			respCacheClustersOutput: describeCacheClustersResponse,
+			respDescribeCacheClusters: describeCacheClustersResponse,
 		},
 	}
 
@@ -51,11 +51,11 @@ func TestGetInstances(t *testing.T) {
 }
 
 func TestParseElastiCacheTags(t *testing.T) {
-	cases := []*mockedListTagsForResource{
+	cases := []*mockedElasticacheSts{
 		{
-			resp:                    listTagsForResourceResponse,
-			respSts:                 getCallerIdentityResponse,
-			respCacheClustersOutput: describeCacheClustersResponse,
+			respTagList:               listTagsForResourceResponse,
+			respGetCallerIdentity:     getCallerIdentityResponse,
+			respDescribeCacheClusters: describeCacheClustersResponse,
 		},
 	}
 

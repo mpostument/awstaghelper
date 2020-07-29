@@ -8,22 +8,22 @@ import (
 	"testing"
 )
 
-type mockedDescribeInstancesPages struct {
+type mockedEc2 struct {
 	ec2iface.EC2API
-	resp ec2.DescribeInstancesOutput
+	respDescribeInstances ec2.DescribeInstancesOutput
 }
 
 // AWS Mocks
-func (m *mockedDescribeInstancesPages) DescribeInstancesPages(input *ec2.DescribeInstancesInput, pageFunc func(*ec2.DescribeInstancesOutput, bool) bool) error {
-	pageFunc(&m.resp, true)
+func (m *mockedEc2) DescribeInstancesPages(input *ec2.DescribeInstancesInput, pageFunc func(*ec2.DescribeInstancesOutput, bool) bool) error {
+	pageFunc(&m.respDescribeInstances, true)
 	return nil
 }
 
 // Tests
 func TestGetInstances(t *testing.T) {
-	cases := []*mockedDescribeInstancesPages{
+	cases := []*mockedEc2{
 		{
-			resp: parseTagsResponse,
+			respDescribeInstances: parseTagsResponse,
 		},
 	}
 
@@ -39,9 +39,9 @@ func TestGetInstances(t *testing.T) {
 }
 
 func TestParseEc2Tags(t *testing.T) {
-	cases := []*mockedDescribeInstancesPages{
+	cases := []*mockedEc2{
 		{
-			resp: parseTagsResponse,
+			respDescribeInstances: parseTagsResponse,
 		},
 	}
 	expectedResult := [][]string{

@@ -8,24 +8,24 @@ import (
 	"testing"
 )
 
-type mockedListTagsForResource struct {
+type mockedS3 struct {
 	s3iface.S3API
-	resp     s3.ListBucketsOutput
-	respTags s3.GetBucketTaggingOutput
+	respListBuckets      s3.ListBucketsOutput
+	respGetBucketTagging s3.GetBucketTaggingOutput
 }
 
-func (m *mockedListTagsForResource) ListBuckets(*s3.ListBucketsInput) (*s3.ListBucketsOutput, error) {
-	return &m.resp, nil
+func (m *mockedS3) ListBuckets(*s3.ListBucketsInput) (*s3.ListBucketsOutput, error) {
+	return &m.respListBuckets, nil
 }
 
-func (m *mockedListTagsForResource) GetBucketTagging(*s3.GetBucketTaggingInput) (*s3.GetBucketTaggingOutput, error) {
-	return &m.respTags, nil
+func (m *mockedS3) GetBucketTagging(*s3.GetBucketTaggingInput) (*s3.GetBucketTaggingOutput, error) {
+	return &m.respGetBucketTagging, nil
 }
 
 func TestGetBuckets(t *testing.T) {
-	cases := []*mockedListTagsForResource{
+	cases := []*mockedS3{
 		{
-			resp: ListBucketsResponse,
+			respListBuckets: ListBucketsResponse,
 		},
 	}
 
@@ -42,10 +42,10 @@ func TestGetBuckets(t *testing.T) {
 }
 
 func TestParseS3Tags(t *testing.T) {
-	cases := []*mockedListTagsForResource{
+	cases := []*mockedS3{
 		{
-			respTags: GetBucketTaggingResponse,
-			resp:     ListBucketsResponse,
+			respGetBucketTagging: GetBucketTaggingResponse,
+			respListBuckets:      ListBucketsResponse,
 		},
 	}
 

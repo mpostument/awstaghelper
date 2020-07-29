@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
+	"github.com/aws/aws-sdk-go/service/elasticsearchservice/elasticsearchserviceiface"
 )
 
 // TagElasticSearch tag instances. Take as input data from csv file. Where first column id
-func TagElasticSearch(csvData [][]string, session session.Session) {
-	client := elasticsearchservice.New(&session)
+func TagElasticSearch(csvData [][]string, client elasticsearchserviceiface.ElasticsearchServiceAPI) {
 
 	var tags []*elasticsearchservice.Tag
 	for r := 1; r < len(csvData); r++ {

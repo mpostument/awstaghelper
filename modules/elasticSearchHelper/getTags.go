@@ -3,16 +3,16 @@ package elasticSearchHelper
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
+	"github.com/aws/aws-sdk-go/service/elasticsearchservice/elasticsearchserviceiface"
 	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"log"
 	"strings"
 )
 
 // getInstances return all elasticsearch from specified region
-func getInstances(session session.Session) *elasticsearchservice.ListDomainNamesOutput {
-	client := elasticsearchservice.New(&session)
+func getInstances(client elasticsearchserviceiface.ElasticsearchServiceAPI) *elasticsearchservice.ListDomainNamesOutput {
 	input := &elasticsearchservice.ListDomainNamesInput{}
 
 	result, err := client.ListDomainNames(input)
@@ -23,13 +23,11 @@ func getInstances(session session.Session) *elasticsearchservice.ListDomainNames
 }
 
 // ParseElasticSearchTags parse output from getInstances and return arn and specified tags.
-func ParseElasticSearchTags(tagsToRead string, session session.Session) [][]string {
-	instancesOutput := getInstances(session)
-	client := elasticsearchservice.New(&session)
-	stsClient := sts.New(&session)
+func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.ElasticsearchServiceAPI, stsClient stsiface.STSAPI, region string) [][]string {
+	instancesOutput := getInstances(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
-		log.Fatal("Not able to get elasticsearchservice tags", err)
+		log.Fatal("Not able to get account id", err)
 	}
 	var rows [][]string
 	headers := []string{"Arn"}
@@ -38,7 +36,7 @@ func ParseElasticSearchTags(tagsToRead string, session session.Session) [][]stri
 	for _, elasticCacheInstance := range instancesOutput.DomainNames {
 
 		clusterArn := fmt.Sprintf("arn:aws:es:%s:%s:domain/%s",
-			*session.Config.Region, *callerIdentity.Account, *elasticCacheInstance.DomainName)
+			region, *callerIdentity.Account, *elasticCacheInstance.DomainName)
 
 		input := &elasticsearchservice.ListTagsInput{
 			ARN: aws.String(clusterArn),
