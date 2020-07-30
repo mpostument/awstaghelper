@@ -19,6 +19,7 @@ import (
 	"awstaghelper/modules/common"
 	"awstaghelper/modules/redshiftHelper"
 	"github.com/aws/aws-sdk-go/service/redshift"
+	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/spf13/cobra"
 )
 
@@ -46,7 +47,8 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
 		client := redshift.New(sess)
-		common.WriteCsv(redshiftHelper.ParseRedshiftTags(tags, client), filename)
+		stsClient := sts.New(sess)
+		common.WriteCsv(redshiftHelper.ParseRedshiftTags(tags, client, stsClient, region), filename)
 	},
 }
 
