@@ -18,6 +18,7 @@ package cmd
 import (
 	"awstaghelper/modules/common"
 	"awstaghelper/modules/redshiftHelper"
+	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/spf13/cobra"
 )
 
@@ -44,7 +45,8 @@ Csv filename can be specified with flag filename.`,
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
-		common.WriteCsv(redshiftHelper.ParseRedshiftTags(tags, *sess), filename)
+		client := redshift.New(sess)
+		common.WriteCsv(redshiftHelper.ParseRedshiftTags(tags, client), filename)
 	},
 }
 
@@ -57,8 +59,9 @@ var tagRedshifCmd = &cobra.Command{
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
+		client := redshift.New(sess)
 		csvData := common.ReadCsv(filename)
-		redshiftHelper.TagRedsfhit(csvData, *sess)
+		redshiftHelper.TagRedsfhit(csvData, client)
 	},
 }
 

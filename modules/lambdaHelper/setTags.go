@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
 )
 
 // TagLambda tag instances. Take as input data from csv file. Where first column id
-func TagLambda(csvData [][]string, session session.Session) {
-	client := lambda.New(&session)
+func TagLambda(csvData [][]string, client lambdaiface.LambdaAPI) {
 
 	tags := make(map[string]*string)
 	for r := 1; r < len(csvData); r++ {
