@@ -18,6 +18,7 @@ package cmd
 import (
 	"awstaghelper/modules/common"
 	"awstaghelper/modules/lambdaHelper"
+	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/spf13/cobra"
 )
 
@@ -44,7 +45,8 @@ Csv filename can be specified with flag filename.`,
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
-		common.WriteCsv(lambdaHelper.ParseLambdasTags(tags, *sess), filename)
+		client := lambda.New(sess)
+		common.WriteCsv(lambdaHelper.ParseLambdasTags(tags, client), filename)
 	},
 }
 
@@ -57,8 +59,9 @@ var tagLambdaCmd = &cobra.Command{
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
+		client := lambda.New(sess)
 		csvData := common.ReadCsv(filename)
-		lambdaHelper.TagLambda(csvData, *sess)
+		lambdaHelper.TagLambda(csvData, client)
 	},
 }
 

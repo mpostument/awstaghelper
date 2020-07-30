@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/elasticache"
+	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 )
 
 // TagElasticache tag instances. Take as input data from csv file. Where first column id
-func TagElasticache(csvData [][]string, session session.Session) {
-	client := elasticache.New(&session)
+func TagElasticache(csvData [][]string, client elasticacheiface.ElastiCacheAPI) {
 
 	var tags []*elasticache.Tag
 	for r := 1; r < len(csvData); r++ {
@@ -23,7 +22,7 @@ func TagElasticache(csvData [][]string, session session.Session) {
 
 		input := &elasticache.AddTagsToResourceInput{
 			ResourceName: aws.String(csvData[r][0]),
-			Tags:     tags,
+			Tags:         tags,
 		}
 
 		_, err := client.AddTagsToResource(input)

@@ -19,6 +19,8 @@ import (
 	"awstaghelper/modules/common"
 	"awstaghelper/modules/elasticSearchHelper"
 	"fmt"
+	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
+	"github.com/aws/aws-sdk-go/service/sts"
 
 	"github.com/spf13/cobra"
 )
@@ -51,7 +53,9 @@ Csv filename can be specified with flag filename.`,
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
-		common.WriteCsv(elasticSearchHelper.ParseElasticSearchTags(tags, *sess), filename)
+		client := elasticsearchservice.New(sess)
+		stsClient := sts.New(sess)
+		common.WriteCsv(elasticSearchHelper.ParseElasticSearchTags(tags, client, stsClient, region), filename)
 	},
 }
 
@@ -65,7 +69,8 @@ var tagElasticSearchCmd = &cobra.Command{
 		region, _ := cmd.Flags().GetString("region")
 		sess := common.GetSession(region, profile)
 		csvData := common.ReadCsv(filename)
-		elasticSearchHelper.TagElasticSearch(csvData, *sess)
+		client := elasticsearchservice.New(sess)
+		elasticSearchHelper.TagElasticSearch(csvData, client)
 	},
 }
 

@@ -2,15 +2,14 @@ package rdsHelper
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rds"
+	"github.com/aws/aws-sdk-go/service/rds/rdsiface"
 	"log"
 	"strings"
 )
 
 // getInstances return all rds instances from specified region
-func getInstances(session session.Session) []*rds.DBInstance {
-	client := rds.New(&session)
+func getInstances(client rdsiface.RDSAPI) []*rds.DBInstance {
 	input := &rds.DescribeDBInstancesInput{}
 
 	var result []*rds.DBInstance
@@ -28,9 +27,8 @@ func getInstances(session session.Session) []*rds.DBInstance {
 }
 
 // ParseRdsTags parse output from getInstances and return arn and specified tags.
-func ParseRdsTags(tagsToRead string, session session.Session) [][]string {
-	instancesOutput := getInstances(session)
-	client := rds.New(&session)
+func ParseRdsTags(tagsToRead string, client rdsiface.RDSAPI) [][]string {
+	instancesOutput := getInstances(client)
 	var rows [][]string
 	headers := []string{"Arn"}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)

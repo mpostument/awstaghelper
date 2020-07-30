@@ -2,16 +2,16 @@ package redshiftHelper
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/redshift"
+	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"log"
 	"strings"
 )
 
 // getInstances return all redshift instances from specified region
-func getInstances(session session.Session) []*redshift.Cluster {
-	client := redshift.New(&session)
+func getInstances(client redshiftiface.RedshiftAPI) []*redshift.Cluster {
 	input := &redshift.DescribeClustersInput{}
 
 	var result []*redshift.Cluster
@@ -29,14 +29,12 @@ func getInstances(session session.Session) []*redshift.Cluster {
 }
 
 // ParseRedshiftTags parse output from getInstances and return arn and specified tags.
-func ParseRedshiftTags(tagsToRead string, session session.Session) [][]string {
-	instancesOutput := getInstances(session)
-	client := redshift.New(&session)
-	stsClient := sts.New(&session)
+func ParseRedshiftTags(tagsToRead string, client redshiftiface.RedshiftAPI, stsClient stsiface.STSAPI, region string) [][]string {
+	instancesOutput := getInstances(client)
 
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
-		log.Fatal("Not able to get elasticache tags", err)
+		log.Fatal("Not able to get account id", err)
 	}
 
 	var rows [][]string
@@ -45,7 +43,7 @@ func ParseRedshiftTags(tagsToRead string, session session.Session) [][]string {
 	rows = append(rows, headers)
 	for _, redshiftInstances := range instancesOutput {
 		clusterArn := fmt.Sprintf("arn:aws:redshift:%s:%s:cluster:%s",
-			*session.Config.Region, *callerIdentity.Account, *redshiftInstances.ClusterIdentifier)
+			region, *callerIdentity.Account, *redshiftInstances.ClusterIdentifier)
 		redshiftTags, err := client.DescribeTags(&redshift.DescribeTagsInput{ResourceName: &clusterArn})
 		if err != nil {
 			fmt.Println("Not able to get redshift tags", err)

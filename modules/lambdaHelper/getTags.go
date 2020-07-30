@@ -2,15 +2,14 @@ package lambdaHelper
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
 	"log"
 	"strings"
 )
 
 // getInstances return all lambdas from specified region
-func getInstances(session session.Session) []*lambda.FunctionConfiguration {
-	client := lambda.New(&session)
+func getInstances(client lambdaiface.LambdaAPI) []*lambda.FunctionConfiguration {
 	input := &lambda.ListFunctionsInput{}
 
 	var result []*lambda.FunctionConfiguration
@@ -28,9 +27,8 @@ func getInstances(session session.Session) []*lambda.FunctionConfiguration {
 }
 
 // ParseLambdasTags parse output from getInstances and return arn and specified tags.
-func ParseLambdasTags(tagsToRead string, session session.Session) [][]string {
-	instancesOutput := getInstances(session)
-	client := lambda.New(&session)
+func ParseLambdasTags(tagsToRead string, client lambdaiface.LambdaAPI) [][]string {
+	instancesOutput := getInstances(client)
 	var rows [][]string
 	headers := []string{"Arn"}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)
