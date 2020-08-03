@@ -26,11 +26,11 @@ func getCWLogGroups(client cloudwatchlogsiface.CloudWatchLogsAPI) []*cloudwatchl
 	return result
 }
 
-// ParseCwLogGroupTags parse output from getInstances and return arn and specified tags.
+// ParseCwLogGroupTags parse output from getInstances and return logGroupName and specified tags.
 func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatchLogsAPI) [][]string {
 	instancesOutput := getCWLogGroups(client)
 	var rows [][]string
-	headers := []string{"Arn"}
+	headers := []string{"LogGroupName"}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)
 	rows = append(rows, headers)
 	for _, logGroup := range instancesOutput {
@@ -51,7 +51,7 @@ func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatc
 		for _, key := range strings.Split(tagsToRead, ",") {
 			resultTags = append(resultTags, tags[key])
 		}
-		rows = append(rows, append([]string{*logGroup.Arn}, resultTags...))
+		rows = append(rows, append([]string{*logGroup.LogGroupName}, resultTags...))
 	}
 	return rows
 }

@@ -51,8 +51,8 @@ func TestParseCwLogGroupTags(t *testing.T) {
 	}
 
 	expectedResult := [][]string{
-		{"Arn", "Name", "Owner"},
-		{"arn:aws:logs:us-east-1:666666666666:log-group:/test-log-group:*", "test-log-group", "mpostument"},
+		{"LogGroupName", "Name", "Owner"},
+		{"test-log-group", "test-log-group", "mpostument"},
 	}
 
 	for _, c := range cases {
@@ -68,7 +68,7 @@ func TestParseCwLogGroupTags(t *testing.T) {
 var describeLogGroupsResponse = cloudwatchlogs.DescribeLogGroupsOutput{
 	LogGroups: []*cloudwatchlogs.LogGroup{
 		{
-			Arn: aws.String("arn:aws:logs:us-east-1:666666666666:log-group:/test-log-group:*"),
+			LogGroupName: aws.String("test-log-group"),
 		},
 	},
 }

@@ -33,7 +33,7 @@ var cloudwatchCmd = &cobra.Command{
 }
 
 var getCloudWatchLogsCmd = &cobra.Command{
-	Use:   "get-log-tags",
+	Use:   "get-cwlog-tags",
 	Short: "Write log group arn and required tags to csv",
 	Long: `Write to csv data with log group arn and required tags to csv. 
 This csv can be used with tag-log command to tag aws environment.
@@ -50,7 +50,23 @@ Csv filename can be specified with flag filename.`,
 	},
 }
 
+var tagCloudWatchLogsCmd = &cobra.Command{
+	Use:   "tag-cwlogs",
+	Short: "Read csv and tag cloudwatch logs with csv data",
+	Long:  `Read csv generated with get-cwlog-tags command and tag cloudwatch logGroup with tags from csv.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := commonLib.GetSession(region, profile)
+		client := cloudwatchlogs.New(sess)
+		csvData := commonLib.ReadCsv(filename)
+		cloudWatchLib.TagCloudWatchLogGroups(csvData, client)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(cloudwatchCmd)
 	cloudwatchCmd.AddCommand(getCloudWatchLogsCmd)
+	cloudwatchCmd.AddCommand(tagCloudWatchLogsCmd)
 }
