@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/modules/common"
-	"awstaghelper/modules/ec2Helper"
+	"awstaghelper/libs/commonLib"
+	"awstaghelper/libs/ec2Lib"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/spf13/cobra"
 )
@@ -44,9 +44,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := common.GetSession(region, profile)
+		sess := commonLib.GetSession(region, profile)
 		client := ec2.New(sess)
-		common.WriteCsv(ec2Helper.ParseEc2Tags(tags, client), filename)
+		commonLib.WriteCsv(ec2Lib.ParseEc2Tags(tags, client), filename)
 	},
 }
 
@@ -58,10 +58,10 @@ var tagEc2Cmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := common.GetSession(region, profile)
-		csvData := common.ReadCsv(filename)
+		sess := commonLib.GetSession(region, profile)
+		csvData := commonLib.ReadCsv(filename)
 		client := ec2.New(sess)
-		ec2Helper.TagEc2(csvData, client)
+		ec2Lib.TagEc2(csvData, client)
 	},
 }
 

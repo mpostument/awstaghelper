@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/modules/common"
-	"awstaghelper/modules/rdsHelper"
+	"awstaghelper/libs/commonLib"
+	"awstaghelper/libs/rdsLib"
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/spf13/cobra"
 )
@@ -44,9 +44,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := common.GetSession(region, profile)
+		sess := commonLib.GetSession(region, profile)
 		client := rds.New(sess)
-		common.WriteCsv(rdsHelper.ParseRdsTags(tags, client), filename)
+		commonLib.WriteCsv(rdsLib.ParseRdsTags(tags, client), filename)
 	},
 }
 
@@ -58,10 +58,10 @@ var tagRdsCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := common.GetSession(region, profile)
-		csvData := common.ReadCsv(filename)
+		sess := commonLib.GetSession(region, profile)
+		csvData := commonLib.ReadCsv(filename)
 		client := rds.New(sess)
-		rdsHelper.TagRds(csvData, client)
+		rdsLib.TagRds(csvData, client)
 	},
 }
 
