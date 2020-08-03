@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/modules/common"
-	"awstaghelper/modules/elasticSearchHelper"
+	"awstaghelper/libs/commonLib"
+	"awstaghelper/libs/elasticSearchLib"
 	"fmt"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/sts"
@@ -52,10 +52,10 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := common.GetSession(region, profile)
+		sess := commonLib.GetSession(region, profile)
 		client := elasticsearchservice.New(sess)
 		stsClient := sts.New(sess)
-		common.WriteCsv(elasticSearchHelper.ParseElasticSearchTags(tags, client, stsClient, region), filename)
+		commonLib.WriteCsv(elasticSearchLib.ParseElasticSearchTags(tags, client, stsClient, region), filename)
 	},
 }
 
@@ -67,10 +67,10 @@ var tagElasticSearchCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := common.GetSession(region, profile)
-		csvData := common.ReadCsv(filename)
+		sess := commonLib.GetSession(region, profile)
+		csvData := commonLib.ReadCsv(filename)
 		client := elasticsearchservice.New(sess)
-		elasticSearchHelper.TagElasticSearch(csvData, client)
+		elasticSearchLib.TagElasticSearch(csvData, client)
 	},
 }
 

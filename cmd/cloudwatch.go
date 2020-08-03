@@ -16,27 +16,27 @@ limitations under the License.
 package cmd
 
 import (
+	"awstaghelper/libs/cloudWatchLib"
 	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/rdsLib"
-	"github.com/aws/aws-sdk-go/service/rds"
+	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/spf13/cobra"
 )
 
-// rdsCmd represents the rds command
-var rdsCmd = &cobra.Command{
-	Use:   "rds",
-	Short: "Root command for interaction with AWS rds services",
-	Long:  `Root command for interaction with AWS rds services.`,
+// cloudwatchCmd represents the cloudwatch command
+var cloudwatchCmd = &cobra.Command{
+	Use:   "cloudwatch",
+	Short: "A root command for cloudwatch (alarms, logs, events)",
+	Long:  `A root command for cloudwatch (alarms, logs, events).`,
 	//Run: func(cmd *cobra.Command, args []string) {
-	//	fmt.Println("rds called")
+	//	fmt.Println("cloudwatch called")
 	//},
 }
 
-var getRdsCmd = &cobra.Command{
-	Use:   "get-rds-tags",
-	Short: "Write rds arn and required tags to csv",
-	Long: `Write to csv data with rds arn and required tags to csv. 
-This csv can be used with tag-rds command to tag aws environment.
+var getCloudWatchLogsCmd = &cobra.Command{
+	Use:   "get-cwlog-tags",
+	Short: "Write log group arn and required tags to csv",
+	Long: `Write to csv data with log group arn and required tags to csv. 
+This csv can be used with tag-log command to tag aws environment.
 Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
 Csv filename can be specified with flag filename.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,28 +45,28 @@ Csv filename can be specified with flag filename.`,
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := commonLib.GetSession(region, profile)
-		client := rds.New(sess)
-		commonLib.WriteCsv(rdsLib.ParseRdsTags(tags, client), filename)
+		client := cloudwatchlogs.New(sess)
+		commonLib.WriteCsv(cloudWatchLib.ParseCwLogGroupTags(tags, client), filename)
 	},
 }
 
-var tagRdsCmd = &cobra.Command{
-	Use:   "tag-rds",
-	Short: "Read csv and tag rds with csv data",
-	Long:  `Read csv generated with get-rds-tags command and tag rds instances with tags from csv.`,
+var tagCloudWatchLogsCmd = &cobra.Command{
+	Use:   "tag-cwlogs",
+	Short: "Read csv and tag cloudwatch logs with csv data",
+	Long:  `Read csv generated with get-cwlog-tags command and tag cloudwatch logGroup with tags from csv.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := commonLib.GetSession(region, profile)
+		client := cloudwatchlogs.New(sess)
 		csvData := commonLib.ReadCsv(filename)
-		client := rds.New(sess)
-		rdsLib.TagRds(csvData, client)
+		cloudWatchLib.TagCloudWatchLogGroups(csvData, client)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(rdsCmd)
-	rdsCmd.AddCommand(getRdsCmd)
-	rdsCmd.AddCommand(tagRdsCmd)
+	rootCmd.AddCommand(cloudwatchCmd)
+	cloudwatchCmd.AddCommand(getCloudWatchLogsCmd)
+	cloudwatchCmd.AddCommand(tagCloudWatchLogsCmd)
 }
