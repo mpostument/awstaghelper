@@ -51,8 +51,8 @@ func TestParseCwAlarmTags(t *testing.T) {
 	}
 
 	expectedResult := [][]string{
-		{"LogGroupName", "Name", "Owner"},
-		{"test-log-group", "test-log-group", "mpostument"},
+		{"Arn", "Name", "Owner"},
+		{"arn:aws:cloudwatch:us-east-1:6666666666:alarm:test-alarm", "test-alarm", "mpostument"},
 	}
 
 	for _, c := range cases {
