@@ -23,7 +23,7 @@ func (m *mockedCloudWatchLog) ListTagsLogGroup(*cloudwatchlogs.ListTagsLogGroupI
 	return &m.respListTagsLogGroup, nil
 }
 
-func TestGetInstances(t *testing.T) {
+func TestGetCWLogGroups(t *testing.T) {
 	cases := []*mockedCloudWatchLog{
 		{
 			respDescribeLogGroups: describeLogGroupsResponse,
