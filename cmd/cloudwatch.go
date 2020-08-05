@@ -18,6 +18,7 @@ package cmd
 import (
 	"awstaghelper/libs/cloudWatchLib"
 	"awstaghelper/libs/commonLib"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/spf13/cobra"
 )
@@ -65,8 +66,43 @@ var tagCloudWatchLogsCmd = &cobra.Command{
 	},
 }
 
+var getCloudWatchAlarmsCmd = &cobra.Command{
+	Use:   "get-cwalarm-tags",
+	Short: "Write alarm arn and required tags to csv",
+	Long: `Write to csv data with alarm arn and required tags to csv. 
+This csv can be used with tag-alarm command to tag aws environment.
+Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
+Csv filename can be specified with flag filename.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		tags, _ := cmd.Flags().GetString("tags")
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := commonLib.GetSession(region, profile)
+		client := cloudwatch.New(sess)
+		commonLib.WriteCsv(cloudWatchLib.ParseCwAlarmTags(tags, client), filename)
+	},
+}
+
+var tagCloudWatchAlarmsCmd = &cobra.Command{
+	Use:   "tag-cwalarms",
+	Short: "Read csv and tag cloudwatch alarms with csv data",
+	Long:  `Read csv generated with get-cwalarms-tags command and tag cloudwatch alarms with tags from csv.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := commonLib.GetSession(region, profile)
+		client := cloudwatch.New(sess)
+		csvData := commonLib.ReadCsv(filename)
+		cloudWatchLib.TagCloudWatchAlarm(csvData, client)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(cloudwatchCmd)
 	cloudwatchCmd.AddCommand(getCloudWatchLogsCmd)
 	cloudwatchCmd.AddCommand(tagCloudWatchLogsCmd)
+	cloudwatchCmd.AddCommand(getCloudWatchAlarmsCmd)
+	cloudwatchCmd.AddCommand(tagCloudWatchAlarmsCmd)
 }
