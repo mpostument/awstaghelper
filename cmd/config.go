@@ -46,7 +46,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := commonLib.GetSession(region, profile)
 		client := configservice.New(sess)
-		commonLib.WriteCsv(configLib.ParseCwAlarmTags(tags, client), filename)
+		commonLib.WriteCsv(configLib.ParseConfigRuleTags(tags, client), filename)
 	},
 }
 
