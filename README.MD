@@ -17,6 +17,8 @@ awstaghelper allow tagging hundreds of AWS resources in few commands
   * [Redshift](#redshift)
   * [ElasticSearch](#elasticsearch)
   * [CloudWatch Logs](#cloudwatchlogs)
+  * [CloudWatch Alarm](#cloudwatchalarm)
+  * [Config](#config)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -142,6 +144,34 @@ Example:
 Read csv and tag cloudwatch logs - `awstaghelper cloudwatch tag-cwlogs`  
 Example:
 `awstaghelper cloudwatch tag-cwlogs --filename cwlTag.csv --profile main`  
+
+### CloudWatch Alarm
+
+#### Get cloudwatch alarm tags
+
+Get list of cloudwatch alarms with required tags - `awstaghelper cloudwatch get-cwalarm-tags`  
+Example:
+`awstaghelper cloudwatch get-cwalarm-tags --filename cwaTag.csv --tags Name,Owner --profile main`
+
+#### Tag cloudwatch alarm
+
+Read csv and tag cloudwatch alarm - `awstaghelper cloudwatch tag-cwalarm`  
+Example:
+`awstaghelper cloudwatch tag-cwalarms --filename cwaTag.csv --profile main`  
+
+### Config Rule
+
+#### Get config rule tags
+
+Get list of config rules with required tags - `awstaghelper config get-rule-tags`  
+Example:
+`awstaghelper config get-rule-tags --filename ruleTag.csv --tags Name,Owner --profile main`
+
+#### Tag config rule
+
+Read csv and tag config rules - `awstaghelper config tag-config`  
+Example:
+`awstaghelper config tag-config --filename configTag.csv --profile main`  
 
 ## Global parameters
 
