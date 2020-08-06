@@ -29,7 +29,7 @@ func TestGetConfigRules(t *testing.T) {
 		},
 	}
 
-	expectedResult := describeConfigRuleResponse.ConfigRules
+	expectedResult := &describeConfigRuleResponse
 
 	for _, c := range cases {
 		t.Run("getConfigRules", func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestParseConfigRuleTags(t *testing.T) {
 
 	expectedResult := [][]string{
 		{"Arn", "Name", "Owner"},
-		{"arn:aws:cloudwatch:us-east-1:6666666666:alarm:test-alarm", "test-alarm", "mpostument"},
+		{"arn:aws:config:us-east-1:6666666666:config-rule/aws-service-rule/fms.amazonaws.com/test-rule", "test-rule", "mpostument"},
 	}
 
 	for _, c := range cases {
@@ -76,7 +76,7 @@ var listAlarmTags = configservice.ListTagsForResourceOutput{
 	Tags: []*configservice.Tag{
 		{
 			Key:   aws.String("Name"),
-			Value: aws.String("test-alarm"),
+			Value: aws.String("test-rule"),
 		},
 		{
 			Key:   aws.String("Owner"),
