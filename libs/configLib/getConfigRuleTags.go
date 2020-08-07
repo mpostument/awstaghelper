@@ -34,7 +34,7 @@ func ParseConfigRuleTags(tagsToRead string, client configserviceiface.ConfigServ
 		}
 		configTags, err := client.ListTagsForResource(input)
 		if err != nil {
-			fmt.Println("Not able to get log group tags", err)
+			fmt.Println("Not able to get config rules", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range configTags.Tags {

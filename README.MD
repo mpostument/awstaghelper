@@ -16,9 +16,10 @@ awstaghelper allow tagging hundreds of AWS resources in few commands
   * [ElastiCache](#elasticache)
   * [Redshift](#redshift)
   * [ElasticSearch](#elasticsearch)
-  * [CloudWatch Logs](#cloudwatchlogs)
-  * [CloudWatch Alarm](#cloudwatchalarm)
-  * [Config](#config)
+  * [CloudWatch Logs](#cloudwatchl-ogs)
+  * [CloudWatch Alarm](#cloudwatchal-arm)
+  * [Config](#config-rule)
+  * [CloudFront Distribution](#cloudfront-distribution)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -172,6 +173,20 @@ Example:
 Read csv and tag config rules - `awstaghelper config tag-config`  
 Example:
 `awstaghelper config tag-config --filename configTag.csv --profile main`  
+
+### CloudFront distribution
+
+#### Get distribution tags
+
+Get list of distribution with required tags - `awstaghelper cloudfront get-distribution-tags`  
+Example:
+`awstaghelper cloudfront get-distribution-tags --filename distributionTag.csv --tags Name,Owner --profile main`
+
+#### Tag distribution
+
+Read csv and tag distribution - `awstaghelper cloudfront tag-distribution`  
+Example:
+`awstaghelper cloudfront tag-distribution --filename distributionTag.csv --profile main`  
 
 ## Global parameters
 
