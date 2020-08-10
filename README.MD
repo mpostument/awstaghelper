@@ -188,6 +188,20 @@ Read csv and tag distribution - `awstaghelper cloudfront tag-distribution`
 Example:
 `awstaghelper cloudfront tag-distribution --filename distributionTag.csv --profile main`  
 
+### ElbV2
+
+#### Get ElbV2 tags
+
+Get list of elbv2 (appliction, network loadbalancer) with required tags - `awstaghelper elb get-elbv2-tags`  
+Example:
+`awstaghelper elb get-elbv2-tags --filename elbv2Tag.csv --tags Name,Owner --profile main`
+
+#### Tag ElbV2
+
+Read csv and tag elbv2 (appliction, network loadbalancer) - `awstaghelper elb tag-elbv2`  
+Example:
+`awstaghelper elb tag-elbv2 --filename elbv2Tag.csv --profile main`  
+
 ## Global parameters
 
 `filename` - path where to write or read data. Supported by every option. Default `awsTags.csv`  
