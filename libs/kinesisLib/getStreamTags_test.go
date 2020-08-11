@@ -4,8 +4,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/aws/aws-sdk-go/service/kinesis/kinesisiface"
-	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -32,7 +30,7 @@ func TestGetStream(t *testing.T) {
 		},
 	}
 
-	expectedResult := listStreamsOutputResponse.Functions
+	expectedResult := listStreamsOutputResponse.StreamNames
 
 	for _, c := range cases {
 		t.Run("getStreams", func(t *testing.T) {
@@ -59,7 +57,7 @@ func TestParseKinesisTags(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run("ParseKinesisTags", func(t *testing.T) {
-			result := ParseKinesisTags("Name,Owner", c)
+			result := ParseKinesisTags("Environment,Owner", c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
