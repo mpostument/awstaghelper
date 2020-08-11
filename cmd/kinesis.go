@@ -1,0 +1,73 @@
+/*
+Copyright © 2020 Maksym Postument 777rip777@gmail.com
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+package cmd
+
+import (
+	"awstaghelper/libs/commonLib"
+	"awstaghelper/libs/kinesisLib"
+	"fmt"
+	"github.com/aws/aws-sdk-go/service/kinesis"
+	"github.com/spf13/cobra"
+)
+
+// kinesisCmd represents the kinesis command
+var kinesisCmd = &cobra.Command{
+	Use:   "kinesis",
+	Short: "Root command for interaction with AWS kinesis services",
+	Long:  `Root command for interaction with AWS kinesis services.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("kinesis called")
+	},
+}
+
+var getStreamCmd = &cobra.Command{
+	Use:   "get-stream-tags",
+	Short: "Write kinesis stream name and required tags to csv",
+	Long: `Write to csv data with kinesis names and required tags to csv. 
+This csv can be used with tag-stream command to tag aws environment.
+Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
+Csv filename can be specified with flag filename.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		tags, _ := cmd.Flags().GetString("tags")
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := commonLib.GetSession(region, profile)
+		client := kinesis.New(sess)
+		commonLib.WriteCsv(kinesisLib.ParseKinesisTags(tags, client), filename)
+	},
+}
+
+var tagStreamCmd = &cobra.Command{
+	Use:   "tag-stream",
+	Short: "Read csv and tag kinesis stream with csv data",
+	Long:  `Read csv generated with get-stream-tags command and tag kinesis stream with tags from csv.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := commonLib.GetSession(region, profile)
+		client := kinesis.New(sess)
+		csvData := commonLib.ReadCsv(filename)
+		kinesisLib.TagStream(csvData, client)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(kinesisCmd)
+	kinesisCmd.AddCommand(getStreamCmd)
+	kinesisCmd.AddCommand(tagStreamCmd)
+}
