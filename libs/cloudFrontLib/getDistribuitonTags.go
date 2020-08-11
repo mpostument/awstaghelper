@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// getDistributions return all config rules from specified region
+// getDistributions return all cloudfront distributions from specified region
 func getDistributions(client cloudfrontiface.CloudFrontAPI) *cloudfront.ListDistributionsOutput {
 	input := &cloudfront.ListDistributionsInput{}
 

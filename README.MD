@@ -20,6 +20,8 @@ awstaghelper allow tagging hundreds of AWS resources in few commands
   * [CloudWatch Alarm](#cloudwatchal-arm)
   * [Config](#config-rule)
   * [CloudFront Distribution](#cloudfront-distribution)
+  * [ElbV2](#elbv2)
+  * [Kinesis Stream](#kinesis-stream)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -201,6 +203,20 @@ Example:
 Read csv and tag elbv2 (appliction, network loadbalancer) - `awstaghelper elb tag-elbv2`  
 Example:
 `awstaghelper elb tag-elbv2 --filename elbv2Tag.csv --profile main`  
+
+### Kinesis stream
+
+#### Get stream tags
+
+Get list of kinesis with required tags - `awstaghelper kinesis get-stream-tags`  
+Example:
+`awstaghelper kinesis get-stream-tags --filename kinesisTag.csv --tags Name,Owner --profile main`
+
+#### Tag streams
+
+Read csv and tag kinesis - `awstaghelper kinesis tag-stream`  
+Example:
+`awstaghelper kinesis tag-stream --filename kinesisTag.csv --profile main`  
 
 ## Global parameters
 
