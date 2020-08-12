@@ -22,6 +22,7 @@ awstaghelper allow tagging hundreds of AWS resources in few commands
   * [CloudFront Distribution](#cloudfront-distribution)
   * [ElbV2](#elbv2)
   * [Kinesis Stream](#kinesis-stream)
+  * [Kinesis Firehose](#kinesis-firehose)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -217,6 +218,20 @@ Example:
 Read csv and tag kinesis - `awstaghelper kinesis tag-stream`  
 Example:
 `awstaghelper kinesis tag-stream --filename kinesisTag.csv --profile main`  
+
+### Kinesis firehose
+
+#### Get firehose tags
+
+Get list of kinesis firehose with required tags - `awstaghelper kinesis get-firehose-tags`  
+Example:
+`awstaghelper kinesis get-firehose-tags --filename firehoseTag.csv --tags Name,Owner --profile main`
+
+#### Tag firehose
+
+Read csv and tag kinesis firehose - `awstaghelper kinesis tag-firehose`  
+Example:
+`awstaghelper kinesis tag-firehose --filename firehoseTag.csv --profile main`  
 
 ## Global parameters
 
