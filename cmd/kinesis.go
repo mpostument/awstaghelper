@@ -18,7 +18,7 @@ package cmd
 import (
 	"awstaghelper/libs/commonLib"
 	"awstaghelper/libs/kinesisLib"
-	"fmt"
+	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/spf13/cobra"
 )
@@ -28,9 +28,9 @@ var kinesisCmd = &cobra.Command{
 	Use:   "kinesis",
 	Short: "Root command for interaction with AWS kinesis services",
 	Long:  `Root command for interaction with AWS kinesis services.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("kinesis called")
-	},
+	//Run: func(cmd *cobra.Command, args []string) {
+	//	fmt.Println("kinesis called")
+	//},
 }
 
 var getStreamCmd = &cobra.Command{
@@ -66,8 +66,43 @@ var tagStreamCmd = &cobra.Command{
 	},
 }
 
+var getFirehoseCmd = &cobra.Command{
+	Use:   "get-firehose-tags",
+	Short: "Write firehose stream name and required tags to csv",
+	Long: `Write to csv data with firehose names and required tags to csv. 
+This csv can be used with tag-stream command to tag aws environment.
+Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
+Csv filename can be specified with flag filename.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		tags, _ := cmd.Flags().GetString("tags")
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := commonLib.GetSession(region, profile)
+		client := firehose.New(sess)
+		commonLib.WriteCsv(kinesisLib.ParseFirehoseTags(tags, client), filename)
+	},
+}
+
+var tagFirehoseCmd = &cobra.Command{
+	Use:   "tag-firehose",
+	Short: "Read csv and tag firehose stream with csv data",
+	Long:  `Read csv generated with get-firehose-tags command and tag firehose stream with tags from csv.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := commonLib.GetSession(region, profile)
+		client := firehose.New(sess)
+		csvData := commonLib.ReadCsv(filename)
+		kinesisLib.TagFirehose(csvData, client)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(kinesisCmd)
 	kinesisCmd.AddCommand(getStreamCmd)
 	kinesisCmd.AddCommand(tagStreamCmd)
+	kinesisCmd.AddCommand(getFirehoseCmd)
+	kinesisCmd.AddCommand(tagFirehoseCmd)
 }
