@@ -1,4 +1,4 @@
-package configLib
+package pkg
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
