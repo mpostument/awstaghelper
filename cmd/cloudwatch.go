@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/cloudWatchLib"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/spf13/cobra"
@@ -47,7 +46,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := cloudwatchlogs.New(sess)
-		pkg.WriteCsv(cloudWatchLib.ParseCwLogGroupTags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseCwLogGroupTags(tags, client), filename)
 	},
 }
 
@@ -62,7 +61,7 @@ var tagCloudWatchLogsCmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		client := cloudwatchlogs.New(sess)
 		csvData := pkg.ReadCsv(filename)
-		cloudWatchLib.TagCloudWatchLogGroups(csvData, client)
+		pkg.TagCloudWatchLogGroups(csvData, client)
 	},
 }
 
@@ -80,7 +79,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := cloudwatch.New(sess)
-		pkg.WriteCsv(cloudWatchLib.ParseCwAlarmTags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseCwAlarmTags(tags, client), filename)
 	},
 }
 
@@ -95,7 +94,7 @@ var tagCloudWatchAlarmsCmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		client := cloudwatch.New(sess)
 		csvData := pkg.ReadCsv(filename)
-		cloudWatchLib.TagCloudWatchAlarm(csvData, client)
+		pkg.TagCloudWatchAlarm(csvData, client)
 	},
 }
 
