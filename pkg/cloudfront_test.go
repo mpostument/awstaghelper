@@ -22,7 +22,7 @@ func (m *mockedCloudFront) ListTagsForResource(*cloudfront.ListTagsForResourceIn
 	return &m.respListTagsForResource, nil
 }
 
-func TestGetConfigRules(t *testing.T) {
+func TestGetCloudFrontDistributions(t *testing.T) {
 	cases := []*mockedCloudFront{
 		{
 			respListDistributions: describeDistributionsResponse,
@@ -41,7 +41,7 @@ func TestGetConfigRules(t *testing.T) {
 	}
 }
 
-func TestParseConfigRuleTags(t *testing.T) {
+func TestParseCloudFrontDistributionTags(t *testing.T) {
 	cases := []*mockedCloudFront{
 		{
 			respListDistributions:   describeDistributionsResponse,

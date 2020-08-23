@@ -48,7 +48,7 @@ func TestParseCwAlarmTags(t *testing.T) {
 	cases := []*mockedCloudWatchAlarm{
 		{
 			respDescribeAlarmsGroups: describeAlarmResponse,
-			respListTagsForResource:  listAlarmTags,
+			respListTagsForResource:  listCloudWatchAlarmsResp,
 		},
 	}
 
@@ -75,7 +75,7 @@ var describeAlarmResponse = cloudwatch.DescribeAlarmsOutput{
 	},
 }
 
-var listAlarmTags = cloudwatch.ListTagsForResourceOutput{
+var listCloudWatchAlarmsResp = cloudwatch.ListTagsForResourceOutput{
 	Tags: []*cloudwatch.Tag{
 		{
 			Key:   aws.String("Name"),
@@ -105,11 +105,11 @@ func (m *mockedCloudWatchLog) ListTagsLogGroup(*cloudwatchlogs.ListTagsLogGroupI
 func TestGetCWLogGroups(t *testing.T) {
 	cases := []*mockedCloudWatchLog{
 		{
-			respDescribeLogGroups: describeLogGroupsResponse,
+			respDescribeLogGroups: describeCloudWatchLogGroupsResponse,
 		},
 	}
 
-	expectedResult := describeLogGroupsResponse.LogGroups
+	expectedResult := describeCloudWatchLogGroupsResponse.LogGroups
 
 	for _, c := range cases {
 		t.Run("getCWLogGroups", func(t *testing.T) {
@@ -124,8 +124,8 @@ func TestGetCWLogGroups(t *testing.T) {
 func TestParseCwLogGroupTags(t *testing.T) {
 	cases := []*mockedCloudWatchLog{
 		{
-			respDescribeLogGroups: describeLogGroupsResponse,
-			respListTagsLogGroup:  listTagsLogGroupResponse,
+			respDescribeLogGroups: describeCloudWatchLogGroupsResponse,
+			respListTagsLogGroup:  listCloudWatchLogsTagResponse,
 		},
 	}
 
@@ -144,7 +144,7 @@ func TestParseCwLogGroupTags(t *testing.T) {
 	}
 }
 
-var describeLogGroupsResponse = cloudwatchlogs.DescribeLogGroupsOutput{
+var describeCloudWatchLogGroupsResponse = cloudwatchlogs.DescribeLogGroupsOutput{
 	LogGroups: []*cloudwatchlogs.LogGroup{
 		{
 			LogGroupName: aws.String("test-log-group"),
@@ -152,7 +152,7 @@ var describeLogGroupsResponse = cloudwatchlogs.DescribeLogGroupsOutput{
 	},
 }
 
-var listTagsLogGroupResponse = cloudwatchlogs.ListTagsLogGroupOutput{
+var listCloudWatchLogsTagResponse = cloudwatchlogs.ListTagsLogGroupOutput{
 	Tags: map[string]*string{
 		"Name":  aws.String("test-log-group"),
 		"Owner": aws.String("mpostument"),

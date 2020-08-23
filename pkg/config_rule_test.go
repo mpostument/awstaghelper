@@ -45,7 +45,7 @@ func TestParseConfigRuleTags(t *testing.T) {
 	cases := []*mockedConfigRule{
 		{
 			respDescribeConfigRules: describeConfigRuleResponse,
-			respListTagsForResource: listAlarmTags,
+			respListTagsForResource: listConfigRuleTags,
 		},
 	}
 
@@ -72,7 +72,7 @@ var describeConfigRuleResponse = configservice.DescribeConfigRulesOutput{
 	},
 }
 
-var listAlarmTags = configservice.ListTagsForResourceOutput{
+var listConfigRuleTags = configservice.ListTagsForResourceOutput{
 	Tags: []*configservice.Tag{
 		{
 			Key:   aws.String("Name"),
