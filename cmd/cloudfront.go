@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/pkg/cloudFrontLib"
+	"awstaghelper/pkg"
 	"awstaghelper/pkg/commonLib"
 	"github.com/aws/aws-sdk-go/service/cloudfront"
 	"github.com/spf13/cobra"
@@ -46,7 +46,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := commonLib.GetSession(region, profile)
 		client := cloudfront.New(sess)
-		commonLib.WriteCsv(cloudFrontLib.ParseDistributionsTags(tags, client), filename)
+		commonLib.WriteCsv(pkg.ParseDistributionsTags(tags, client), filename)
 	},
 }
 
@@ -61,7 +61,7 @@ var tagDistributionsCmd = &cobra.Command{
 		sess := commonLib.GetSession(region, profile)
 		client := cloudfront.New(sess)
 		csvData := commonLib.ReadCsv(filename)
-		cloudFrontLib.TagDistribution(csvData, client)
+		pkg.TagDistribution(csvData, client)
 	},
 }
 
