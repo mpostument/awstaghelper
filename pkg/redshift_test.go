@@ -1,4 +1,4 @@
-package redshiftLib
+package pkg
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -60,8 +60,8 @@ func TestParseRedshiftTags(t *testing.T) {
 	cases := []*mockedRedshift{
 		{
 			respDescribeClustersPages: describeClustersPagesResponse,
-			respGetCallerIdentity:     getCallerIdentityResponse,
-			respDescribeTags:          describeTagsResponse,
+			respGetCallerIdentity:     getRedShiftCallerIdentityResponse,
+			respDescribeTags:          describeRedShiftTagsResponse,
 		},
 	}
 
@@ -80,11 +80,11 @@ func TestParseRedshiftTags(t *testing.T) {
 	}
 }
 
-var getCallerIdentityResponse = sts.GetCallerIdentityOutput{
+var getRedShiftCallerIdentityResponse = sts.GetCallerIdentityOutput{
 	Account: aws.String("666666666"),
 }
 
-var describeTagsResponse = redshift.DescribeTagsOutput{
+var describeRedShiftTagsResponse = redshift.DescribeTagsOutput{
 	TaggedResources: []*redshift.TaggedResource{
 		{
 			Tag: &redshift.Tag{

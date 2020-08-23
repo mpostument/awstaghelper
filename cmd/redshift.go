@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/redshiftLib"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/spf13/cobra"
@@ -48,7 +47,7 @@ Csv filename can be specified with flag filename.`,
 		sess := pkg.GetSession(region, profile)
 		client := redshift.New(sess)
 		stsClient := sts.New(sess)
-		pkg.WriteCsv(redshiftLib.ParseRedshiftTags(tags, client, stsClient, region), filename)
+		pkg.WriteCsv(pkg.ParseRedshiftTags(tags, client, stsClient, region), filename)
 	},
 }
 
@@ -63,7 +62,7 @@ var tagRedshifCmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		client := redshift.New(sess)
 		csvData := pkg.ReadCsv(filename)
-		redshiftLib.TagRedsfhit(csvData, client)
+		pkg.TagRedShift(csvData, client)
 	},
 }
 
