@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/pkg/commonLib"
+	"awstaghelper/pkg"
 	"awstaghelper/pkg/lambdaLib"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/spf13/cobra"
@@ -44,9 +44,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := lambda.New(sess)
-		commonLib.WriteCsv(lambdaLib.ParseLambdasTags(tags, client), filename)
+		pkg.WriteCsv(lambdaLib.ParseLambdasTags(tags, client), filename)
 	},
 }
 
@@ -58,9 +58,9 @@ var tagLambdaCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := lambda.New(sess)
-		csvData := commonLib.ReadCsv(filename)
+		csvData := pkg.ReadCsv(filename)
 		lambdaLib.TagLambda(csvData, client)
 	},
 }

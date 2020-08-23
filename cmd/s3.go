@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/commonLib"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/spf13/cobra"
 )
@@ -44,9 +43,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := s3.New(sess)
-		commonLib.WriteCsv(pkg.ParseS3Tags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseS3Tags(tags, client), filename)
 	},
 }
 
@@ -58,9 +57,9 @@ var tagS3Cmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := s3.New(sess)
-		csvData := commonLib.ReadCsv(filename)
+		csvData := pkg.ReadCsv(filename)
 		pkg.TagS3(csvData, client)
 	},
 }

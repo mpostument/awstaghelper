@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"awstaghelper/pkg"
 	"awstaghelper/pkg/cloudWatchLib"
-	"awstaghelper/pkg/commonLib"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/spf13/cobra"
@@ -45,9 +45,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := cloudwatchlogs.New(sess)
-		commonLib.WriteCsv(cloudWatchLib.ParseCwLogGroupTags(tags, client), filename)
+		pkg.WriteCsv(cloudWatchLib.ParseCwLogGroupTags(tags, client), filename)
 	},
 }
 
@@ -59,9 +59,9 @@ var tagCloudWatchLogsCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := cloudwatchlogs.New(sess)
-		csvData := commonLib.ReadCsv(filename)
+		csvData := pkg.ReadCsv(filename)
 		cloudWatchLib.TagCloudWatchLogGroups(csvData, client)
 	},
 }
@@ -78,9 +78,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := cloudwatch.New(sess)
-		commonLib.WriteCsv(cloudWatchLib.ParseCwAlarmTags(tags, client), filename)
+		pkg.WriteCsv(cloudWatchLib.ParseCwAlarmTags(tags, client), filename)
 	},
 }
 
@@ -92,9 +92,9 @@ var tagCloudWatchAlarmsCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := cloudwatch.New(sess)
-		csvData := commonLib.ReadCsv(filename)
+		csvData := pkg.ReadCsv(filename)
 		cloudWatchLib.TagCloudWatchAlarm(csvData, client)
 	},
 }

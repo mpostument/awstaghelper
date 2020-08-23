@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/pkg/commonLib"
+	"awstaghelper/pkg"
 	"awstaghelper/pkg/kinesisLib"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/kinesis"
@@ -45,9 +45,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := kinesis.New(sess)
-		commonLib.WriteCsv(kinesisLib.ParseKinesisTags(tags, client), filename)
+		pkg.WriteCsv(kinesisLib.ParseKinesisTags(tags, client), filename)
 	},
 }
 
@@ -59,9 +59,9 @@ var tagStreamCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := kinesis.New(sess)
-		csvData := commonLib.ReadCsv(filename)
+		csvData := pkg.ReadCsv(filename)
 		kinesisLib.TagStream(csvData, client)
 	},
 }
@@ -78,9 +78,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := firehose.New(sess)
-		commonLib.WriteCsv(kinesisLib.ParseFirehoseTags(tags, client), filename)
+		pkg.WriteCsv(kinesisLib.ParseFirehoseTags(tags, client), filename)
 	},
 }
 
@@ -92,9 +92,9 @@ var tagFirehoseCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := firehose.New(sess)
-		csvData := commonLib.ReadCsv(filename)
+		csvData := pkg.ReadCsv(filename)
 		kinesisLib.TagFirehose(csvData, client)
 	},
 }

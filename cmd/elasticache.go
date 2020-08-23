@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/pkg/commonLib"
+	"awstaghelper/pkg"
 	"awstaghelper/pkg/elastiCacheLib"
 	"github.com/aws/aws-sdk-go/service/elasticache"
 	"github.com/aws/aws-sdk-go/service/sts"
@@ -45,10 +45,10 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		elastiCacheClient := elasticache.New(sess)
 		stsClient := sts.New(sess)
-		commonLib.WriteCsv(elastiCacheLib.ParseElastiCacheTags(tags, elastiCacheClient, stsClient, *sess.Config.Region), filename)
+		pkg.WriteCsv(elastiCacheLib.ParseElastiCacheTags(tags, elastiCacheClient, stsClient, *sess.Config.Region), filename)
 	},
 }
 
@@ -60,9 +60,9 @@ var tagElastiCacheCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		elastiCacheClient := elasticache.New(sess)
-		csvData := commonLib.ReadCsv(filename)
+		csvData := pkg.ReadCsv(filename)
 		elastiCacheLib.TagElasticache(csvData, elastiCacheClient)
 	},
 }
