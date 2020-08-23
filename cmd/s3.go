@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"awstaghelper/pkg"
 	"awstaghelper/pkg/commonLib"
-	"awstaghelper/pkg/s3Lib"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/spf13/cobra"
 )
@@ -46,7 +46,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := commonLib.GetSession(region, profile)
 		client := s3.New(sess)
-		commonLib.WriteCsv(s3Lib.ParseS3Tags(tags, client), filename)
+		commonLib.WriteCsv(pkg.ParseS3Tags(tags, client), filename)
 	},
 }
 
@@ -61,7 +61,7 @@ var tagS3Cmd = &cobra.Command{
 		sess := commonLib.GetSession(region, profile)
 		client := s3.New(sess)
 		csvData := commonLib.ReadCsv(filename)
-		s3Lib.TagS3(csvData, client)
+		pkg.TagS3(csvData, client)
 	},
 }
 
