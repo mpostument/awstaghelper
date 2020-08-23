@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/cloudWatchLib"
-	"awstaghelper/libs/commonLib"
+	"awstaghelper/pkg/cloudWatchLib"
+	"awstaghelper/pkg/commonLib"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/spf13/cobra"

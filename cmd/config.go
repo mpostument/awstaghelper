@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/configLib"
+	"awstaghelper/pkg/commonLib"
+	"awstaghelper/pkg/configLib"
 	"github.com/aws/aws-sdk-go/service/configservice"
 	"github.com/spf13/cobra"
 )

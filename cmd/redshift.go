@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/redshiftLib"
+	"awstaghelper/pkg/commonLib"
+	"awstaghelper/pkg/redshiftLib"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/spf13/cobra"

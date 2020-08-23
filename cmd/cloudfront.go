@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/cloudFrontLib"
-	"awstaghelper/libs/commonLib"
+	"awstaghelper/pkg/cloudFrontLib"
+	"awstaghelper/pkg/commonLib"
 	"github.com/aws/aws-sdk-go/service/cloudfront"
 	"github.com/spf13/cobra"
 )

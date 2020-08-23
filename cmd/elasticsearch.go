@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/elasticSearchLib"
+	"awstaghelper/pkg/commonLib"
+	"awstaghelper/pkg/elasticSearchLib"
 	"fmt"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/sts"

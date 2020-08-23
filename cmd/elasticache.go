@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/elastiCacheLib"
+	"awstaghelper/pkg/commonLib"
+	"awstaghelper/pkg/elastiCacheLib"
 	"github.com/aws/aws-sdk-go/service/elasticache"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/spf13/cobra"

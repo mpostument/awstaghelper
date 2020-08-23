@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/lambdaLib"
+	"awstaghelper/pkg/commonLib"
+	"awstaghelper/pkg/lambdaLib"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/spf13/cobra"
 )
