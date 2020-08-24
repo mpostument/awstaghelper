@@ -2,7 +2,8 @@ name: goreleaser
 
 on:
   push:
-    branches: [ master, main ]
+    tags:
+      - '*'
 
 jobs:
   goreleaser:
