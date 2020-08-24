@@ -23,7 +23,7 @@ func (m *mockedElbv2) DescribeTags(*elbv2.DescribeTagsInput) (*elbv2.DescribeTag
 	return &m.respDescribeTags, nil
 }
 
-func TestGetInstances(t *testing.T) {
+func TestGetElbV2(t *testing.T) {
 	cases := []*mockedElbv2{
 		{
 			respDescribeLoadBalancers: describeLoadBalancersResponse,
