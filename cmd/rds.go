@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/rdsLib"
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/spf13/cobra"
 )
@@ -46,7 +45,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := rds.New(sess)
-		pkg.WriteCsv(rdsLib.ParseRdsTags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseRDSTags(tags, client), filename)
 	},
 }
 
@@ -61,7 +60,7 @@ var tagRdsCmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		csvData := pkg.ReadCsv(filename)
 		client := rds.New(sess)
-		rdsLib.TagRds(csvData, client)
+		pkg.TagRDS(csvData, client)
 	},
 }
 

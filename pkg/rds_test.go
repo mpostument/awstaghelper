@@ -1,4 +1,4 @@
-package rdsLib
+package pkg
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -23,7 +23,7 @@ func (m *mockedRds) ListTagsForResource(*rds.ListTagsForResourceInput) (*rds.Lis
 	return &m.respListTagsForResource, nil
 }
 
-func TestGetInstances(t *testing.T) {
+func TestGetRDSInstances(t *testing.T) {
 	cases := []*mockedRds{
 		{
 			respDescribeDBInstances: describeDbInstancesResponse,
@@ -34,7 +34,7 @@ func TestGetInstances(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
-			result := getInstances(c)
+			result := getRDSInstances(c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
@@ -42,7 +42,7 @@ func TestGetInstances(t *testing.T) {
 	}
 }
 
-func TestParseElastiCacheTags(t *testing.T) {
+func TestParseRDSTags(t *testing.T) {
 	cases := []*mockedRds{
 		{
 			respDescribeDBInstances: describeDbInstancesResponse,
@@ -56,8 +56,8 @@ func TestParseElastiCacheTags(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		t.Run("ParseRdsTags", func(t *testing.T) {
-			result := ParseRdsTags("Name,Owner", c)
+		t.Run("ParseRDSTags", func(t *testing.T) {
+			result := ParseRDSTags("Name,Owner", c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
