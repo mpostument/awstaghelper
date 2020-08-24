@@ -16,8 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/elbLib"
+	"awstaghelper/pkg"
 	"github.com/aws/aws-sdk-go/service/elbv2"
 	"github.com/spf13/cobra"
 )
@@ -44,9 +43,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := elbv2.New(sess)
-		commonLib.WriteCsv(elbLib.ParseElbV2Tags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseElbV2Tags(tags, client), filename)
 	},
 }
 
@@ -58,10 +57,10 @@ var tagElbV2Cmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := elbv2.New(sess)
-		csvData := commonLib.ReadCsv(filename)
-		elbLib.TagElbV2(csvData, client)
+		csvData := pkg.ReadCsv(filename)
+		pkg.TagElbV2(csvData, client)
 	},
 }
 

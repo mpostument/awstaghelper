@@ -16,8 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/configLib"
+	"awstaghelper/pkg"
 	"github.com/aws/aws-sdk-go/service/configservice"
 	"github.com/spf13/cobra"
 )
@@ -44,9 +43,9 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := configservice.New(sess)
-		commonLib.WriteCsv(configLib.ParseConfigRuleTags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseConfigRuleTags(tags, client), filename)
 	},
 }
 
@@ -58,10 +57,10 @@ var tagConfigRuleCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := configservice.New(sess)
-		csvData := commonLib.ReadCsv(filename)
-		configLib.TagConfigRule(csvData, client)
+		csvData := pkg.ReadCsv(filename)
+		pkg.TagConfigRule(csvData, client)
 	},
 }
 

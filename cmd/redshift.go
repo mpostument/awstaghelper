@@ -16,8 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/libs/commonLib"
-	"awstaghelper/libs/redshiftLib"
+	"awstaghelper/pkg"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/spf13/cobra"
@@ -45,10 +44,10 @@ Csv filename can be specified with flag filename.`,
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := redshift.New(sess)
 		stsClient := sts.New(sess)
-		commonLib.WriteCsv(redshiftLib.ParseRedshiftTags(tags, client, stsClient, region), filename)
+		pkg.WriteCsv(pkg.ParseRedshiftTags(tags, client, stsClient, region), filename)
 	},
 }
 
@@ -60,10 +59,10 @@ var tagRedshifCmd = &cobra.Command{
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
-		sess := commonLib.GetSession(region, profile)
+		sess := pkg.GetSession(region, profile)
 		client := redshift.New(sess)
-		csvData := commonLib.ReadCsv(filename)
-		redshiftLib.TagRedsfhit(csvData, client)
+		csvData := pkg.ReadCsv(filename)
+		pkg.TagRedShift(csvData, client)
 	},
 }
 
