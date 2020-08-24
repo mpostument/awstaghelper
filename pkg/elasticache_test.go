@@ -1,4 +1,4 @@
-package elastiCacheLib
+package pkg
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -31,7 +31,7 @@ func (m *mockedElasticacheSts) ListTagsForResource(*elasticache.ListTagsForResou
 	return &m.respTagList, nil
 }
 
-func TestGetInstances(t *testing.T) {
+func TestGetElastiCacheClusters(t *testing.T) {
 	cases := []*mockedElasticacheSts{
 		{
 			respDescribeCacheClusters: describeCacheClustersResponse,
@@ -42,7 +42,7 @@ func TestGetInstances(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
-			result := getInstances(c)
+			result := getElastiCacheClusters(c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
@@ -53,7 +53,7 @@ func TestGetInstances(t *testing.T) {
 func TestParseElastiCacheTags(t *testing.T) {
 	cases := []*mockedElasticacheSts{
 		{
-			respTagList:               listTagsForResourceResponse,
+			respTagList:               listElastiCacheTagsResponse,
 			respGetCallerIdentity:     getCallerIdentityResponse,
 			respDescribeCacheClusters: describeCacheClustersResponse,
 		},
@@ -65,8 +65,8 @@ func TestParseElastiCacheTags(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		t.Run("ParseElastiCacheTags", func(t *testing.T) {
-			result := ParseElastiCacheTags("Name,Owner", c, c, "us-east-1")
+		t.Run("ParseElastiCacheClusterTags", func(t *testing.T) {
+			result := ParseElastiCacheClusterTags("Name,Owner", c, c, "us-east-1")
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
@@ -86,7 +86,7 @@ var describeCacheClustersResponse = elasticache.DescribeCacheClustersOutput{
 	},
 }
 
-var listTagsForResourceResponse = elasticache.TagListMessage{
+var listElastiCacheTagsResponse = elasticache.TagListMessage{
 	TagList: []*elasticache.Tag{
 		{
 			Key:   aws.String("Name"),

@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/elastiCacheLib"
 	"github.com/aws/aws-sdk-go/service/elasticache"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/spf13/cobra"
@@ -48,7 +47,7 @@ Csv filename can be specified with flag filename.`,
 		sess := pkg.GetSession(region, profile)
 		elastiCacheClient := elasticache.New(sess)
 		stsClient := sts.New(sess)
-		pkg.WriteCsv(elastiCacheLib.ParseElastiCacheTags(tags, elastiCacheClient, stsClient, *sess.Config.Region), filename)
+		pkg.WriteCsv(pkg.ParseElastiCacheClusterTags(tags, elastiCacheClient, stsClient, *sess.Config.Region), filename)
 	},
 }
 
@@ -63,7 +62,7 @@ var tagElastiCacheCmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		elastiCacheClient := elasticache.New(sess)
 		csvData := pkg.ReadCsv(filename)
-		elastiCacheLib.TagElasticache(csvData, elastiCacheClient)
+		pkg.TagElastiCache(csvData, elastiCacheClient)
 	},
 }
 

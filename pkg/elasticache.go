@@ -1,8 +1,9 @@
-package elastiCacheLib
+package pkg
 
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elasticache"
 	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 	"github.com/aws/aws-sdk-go/service/sts"
@@ -11,8 +12,8 @@ import (
 	"strings"
 )
 
-// getInstances return all ElastiCache from specified region
-func getInstances(client elasticacheiface.ElastiCacheAPI) []*elasticache.CacheCluster {
+// getElastiCacheClusters return all ElastiCache from specified region
+func getElastiCacheClusters(client elasticacheiface.ElastiCacheAPI) []*elasticache.CacheCluster {
 	input := &elasticache.DescribeCacheClustersInput{}
 
 	var result []*elasticache.CacheCluster
@@ -29,9 +30,9 @@ func getInstances(client elasticacheiface.ElastiCacheAPI) []*elasticache.CacheCl
 	return result
 }
 
-// ParseElastiCacheTags parse output from getInstances and return arn and specified tags.
-func ParseElastiCacheTags(tagsToRead string, client elasticacheiface.ElastiCacheAPI, stsClient stsiface.STSAPI, region string) [][]string {
-	instancesOutput := getInstances(client)
+// ParseElastiCacheClusterTags parse output from getElastiCacheClusters and return arn and specified tags.
+func ParseElastiCacheClusterTags(tagsToRead string, client elasticacheiface.ElastiCacheAPI, stsClient stsiface.STSAPI, region string) [][]string {
+	instancesOutput := getElastiCacheClusters(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
 		log.Fatal("Not able to get account id", err)
@@ -64,4 +65,36 @@ func ParseElastiCacheTags(tagsToRead string, client elasticacheiface.ElastiCache
 		rows = append(rows, append([]string{clusterArn}, resultTags...))
 	}
 	return rows
+}
+
+// TagElastiCache tag instances. Take as input data from csv file. Where first column id
+func TagElastiCache(csvData [][]string, client elasticacheiface.ElastiCacheAPI) {
+
+	var tags []*elasticache.Tag
+	for r := 1; r < len(csvData); r++ {
+		for c := 1; c < len(csvData[0]); c++ {
+			tags = append(tags, &elasticache.Tag{
+				Key:   &csvData[0][c],
+				Value: &csvData[r][c],
+			})
+		}
+
+		input := &elasticache.AddTagsToResourceInput{
+			ResourceName: aws.String(csvData[r][0]),
+			Tags:         tags,
+		}
+
+		_, err := client.AddTagsToResource(input)
+		if err != nil {
+			if aerr, ok := err.(awserr.Error); ok {
+				switch aerr.Code() {
+				default:
+					fmt.Println(aerr.Error())
+				}
+			} else {
+				fmt.Println(err.Error())
+			}
+			return
+		}
+	}
 }
