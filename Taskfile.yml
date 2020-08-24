@@ -5,5 +5,10 @@ version: '3'
 
 tasks:
   test:
+    desc: run tests
     cmds:
       - cmd: go test ./...
+  lint:
+    desc: run golangci-lint
+    cmds:
+      - cmd: golangci-lint run
