@@ -1,4 +1,4 @@
-package elbLib
+package pkg
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -42,11 +42,11 @@ func TestGetElbV2(t *testing.T) {
 	}
 }
 
-func TestParseLambdaTags(t *testing.T) {
+func TestParseElbV2Tags(t *testing.T) {
 	cases := []*mockedElbv2{
 		{
 			respDescribeLoadBalancers: describeLoadBalancersResponse,
-			respDescribeTags:          listTagsResponse,
+			respDescribeTags:          listElbV2TagsResponse,
 		},
 	}
 
@@ -73,7 +73,7 @@ var describeLoadBalancersResponse = elbv2.DescribeLoadBalancersOutput{
 	},
 }
 
-var listTagsResponse = elbv2.DescribeTagsOutput{
+var listElbV2TagsResponse = elbv2.DescribeTagsOutput{
 	TagDescriptions: []*elbv2.TagDescription{
 		{
 			Tags: []*elbv2.Tag{

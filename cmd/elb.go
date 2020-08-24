@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/elbLib"
 	"github.com/aws/aws-sdk-go/service/elbv2"
 	"github.com/spf13/cobra"
 )
@@ -46,7 +45,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := elbv2.New(sess)
-		pkg.WriteCsv(elbLib.ParseElbV2Tags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseElbV2Tags(tags, client), filename)
 	},
 }
 
@@ -61,7 +60,7 @@ var tagElbV2Cmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		client := elbv2.New(sess)
 		csvData := pkg.ReadCsv(filename)
-		elbLib.TagElbV2(csvData, client)
+		pkg.TagElbV2(csvData, client)
 	},
 }
 
