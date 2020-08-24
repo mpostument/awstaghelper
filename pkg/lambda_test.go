@@ -1,4 +1,4 @@
-package lambdaLib
+package pkg
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -23,7 +23,7 @@ func (m *mockedLambda) ListTags(*lambda.ListTagsInput) (*lambda.ListTagsOutput, 
 	return &m.respListTags, nil
 }
 
-func TestGetInstances(t *testing.T) {
+func TestGetLambdaFunctions(t *testing.T) {
 	cases := []*mockedLambda{
 		{
 			respListFunctions: describeListFunctionsResponse,
@@ -34,7 +34,7 @@ func TestGetInstances(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
-			result := getInstances(c)
+			result := getLambdaFunctions(c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
@@ -42,7 +42,7 @@ func TestGetInstances(t *testing.T) {
 	}
 }
 
-func TestParseLambdaTags(t *testing.T) {
+func TestParseLambdaFunctionTags(t *testing.T) {
 	cases := []*mockedLambda{
 		{
 			respListFunctions: describeListFunctionsResponse,
@@ -57,7 +57,7 @@ func TestParseLambdaTags(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run("ParseElastiCacheTags", func(t *testing.T) {
-			result := ParseLambdasTags("Name,Owner", c)
+			result := ParseLambdaFunctionTags("Name,Owner", c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
