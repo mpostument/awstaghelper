@@ -1,8 +1,9 @@
-package elasticSearchLib
+package pkg
 
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice/elasticsearchserviceiface"
 	"github.com/aws/aws-sdk-go/service/sts"
@@ -11,8 +12,8 @@ import (
 	"strings"
 )
 
-// getInstances return all elasticsearch from specified region
-func getInstances(client elasticsearchserviceiface.ElasticsearchServiceAPI) *elasticsearchservice.ListDomainNamesOutput {
+// getElasticSearchDomains return all elasticsearch from specified region
+func getElasticSearchDomains(client elasticsearchserviceiface.ElasticsearchServiceAPI) *elasticsearchservice.ListDomainNamesOutput {
 	input := &elasticsearchservice.ListDomainNamesInput{}
 
 	result, err := client.ListDomainNames(input)
@@ -22,9 +23,9 @@ func getInstances(client elasticsearchserviceiface.ElasticsearchServiceAPI) *ela
 	return result
 }
 
-// ParseElasticSearchTags parse output from getInstances and return arn and specified tags.
+// ParseElasticSearchTags parse output from getElasticSearchDomains and return arn and specified tags.
 func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.ElasticsearchServiceAPI, stsClient stsiface.STSAPI, region string) [][]string {
-	instancesOutput := getInstances(client)
+	instancesOutput := getElasticSearchDomains(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
 		log.Fatal("Not able to get account id", err)
@@ -57,4 +58,36 @@ func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.
 		rows = append(rows, append([]string{clusterArn}, resultTags...))
 	}
 	return rows
+}
+
+// TagElasticSearch tag instances. Take as input data from csv file. Where first column id
+func TagElasticSearch(csvData [][]string, client elasticsearchserviceiface.ElasticsearchServiceAPI) {
+
+	var tags []*elasticsearchservice.Tag
+	for r := 1; r < len(csvData); r++ {
+		for c := 1; c < len(csvData[0]); c++ {
+			tags = append(tags, &elasticsearchservice.Tag{
+				Key:   &csvData[0][c],
+				Value: &csvData[r][c],
+			})
+		}
+
+		input := &elasticsearchservice.AddTagsInput{
+			ARN:     aws.String(csvData[r][0]),
+			TagList: tags,
+		}
+
+		_, err := client.AddTags(input)
+		if err != nil {
+			if aerr, ok := err.(awserr.Error); ok {
+				switch aerr.Code() {
+				default:
+					fmt.Println(aerr.Error())
+				}
+			} else {
+				fmt.Println(err.Error())
+			}
+			return
+		}
+	}
 }

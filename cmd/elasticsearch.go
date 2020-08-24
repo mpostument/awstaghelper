@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/elasticSearchLib"
 	"fmt"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/sts"
@@ -55,7 +54,7 @@ Csv filename can be specified with flag filename.`,
 		sess := pkg.GetSession(region, profile)
 		client := elasticsearchservice.New(sess)
 		stsClient := sts.New(sess)
-		pkg.WriteCsv(elasticSearchLib.ParseElasticSearchTags(tags, client, stsClient, region), filename)
+		pkg.WriteCsv(pkg.ParseElasticSearchTags(tags, client, stsClient, region), filename)
 	},
 }
 
@@ -70,7 +69,7 @@ var tagElasticSearchCmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		csvData := pkg.ReadCsv(filename)
 		client := elasticsearchservice.New(sess)
-		elasticSearchLib.TagElasticSearch(csvData, client)
+		pkg.TagElasticSearch(csvData, client)
 	},
 }
 

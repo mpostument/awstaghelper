@@ -1,4 +1,4 @@
-package elasticSearchLib
+package pkg
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -30,7 +30,7 @@ func (m *mockedElasticSearchSts) ListTags(*elasticsearchservice.ListTagsInput) (
 	return &m.respListTagsOutput, nil
 }
 
-func TestGetInstances(t *testing.T) {
+func TestGetElasticSearchDomains(t *testing.T) {
 	cases := []*mockedElasticSearchSts{
 		{
 			respListDomain: listDomainsResponse,
@@ -41,7 +41,7 @@ func TestGetInstances(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
-			result := getInstances(c)
+			result := getElasticSearchDomains(c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
@@ -49,12 +49,12 @@ func TestGetInstances(t *testing.T) {
 	}
 }
 
-func TestParseElastiCacheTags(t *testing.T) {
+func TestParseElastiSearchTags(t *testing.T) {
 	cases := []*mockedElasticSearchSts{
 		{
 			respListDomain:        listDomainsResponse,
 			respGetCallerIdentity: getCallerIdentityResponse,
-			respListTagsOutput:    listTagsResponse,
+			respListTagsOutput:    listElasticSearchDomainTags,
 		},
 	}
 
@@ -73,10 +73,6 @@ func TestParseElastiCacheTags(t *testing.T) {
 	}
 }
 
-var getCallerIdentityResponse = sts.GetCallerIdentityOutput{
-	Account: aws.String("666666666"),
-}
-
 var listDomainsResponse = elasticsearchservice.ListDomainNamesOutput{
 	DomainNames: []*elasticsearchservice.DomainInfo{
 		{
@@ -85,7 +81,7 @@ var listDomainsResponse = elasticsearchservice.ListDomainNamesOutput{
 	},
 }
 
-var listTagsResponse = elasticsearchservice.ListTagsOutput{
+var listElasticSearchDomainTags = elasticsearchservice.ListTagsOutput{
 	TagList: []*elasticsearchservice.Tag{
 		{
 			Key:   aws.String("Name"),
