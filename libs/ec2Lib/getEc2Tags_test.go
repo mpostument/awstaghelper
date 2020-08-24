@@ -30,7 +30,7 @@ func TestGetInstances(t *testing.T) {
 	expectedResult := parseTagsResponse.Reservations
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
-			result := getInstances(c)
+			result := getEc2(c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})

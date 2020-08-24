@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-// getInstances return all lambdas from specified region
-func getInstances(client lambdaiface.LambdaAPI) []*lambda.FunctionConfiguration {
+// getLambdas return all lambdas from specified region
+func getLambdas(client lambdaiface.LambdaAPI) []*lambda.FunctionConfiguration {
 	input := &lambda.ListFunctionsInput{}
 
 	var result []*lambda.FunctionConfiguration
@@ -20,15 +20,15 @@ func getInstances(client lambdaiface.LambdaAPI) []*lambda.FunctionConfiguration 
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get instances", err)
+		log.Fatal("Not able to get lambdas", err)
 		return nil
 	}
 	return result
 }
 
-// ParseLambdasTags parse output from getInstances and return arn and specified tags.
+// ParseLambdasTags parse output from getLambdas and return arn and specified tags.
 func ParseLambdasTags(tagsToRead string, client lambdaiface.LambdaAPI) [][]string {
-	instancesOutput := getInstances(client)
+	instancesOutput := getLambdas(client)
 	var rows [][]string
 	headers := []string{"Arn"}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)
