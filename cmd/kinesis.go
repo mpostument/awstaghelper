@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/kinesisLib"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/spf13/cobra"
@@ -47,7 +46,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := kinesis.New(sess)
-		pkg.WriteCsv(kinesisLib.ParseKinesisTags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseKinesisTags(tags, client), filename)
 	},
 }
 
@@ -62,7 +61,7 @@ var tagStreamCmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		client := kinesis.New(sess)
 		csvData := pkg.ReadCsv(filename)
-		kinesisLib.TagStream(csvData, client)
+		pkg.TagKinesisStream(csvData, client)
 	},
 }
 
@@ -80,7 +79,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := firehose.New(sess)
-		pkg.WriteCsv(kinesisLib.ParseFirehoseTags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseFirehoseTags(tags, client), filename)
 	},
 }
 
@@ -95,7 +94,7 @@ var tagFirehoseCmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		client := firehose.New(sess)
 		csvData := pkg.ReadCsv(filename)
-		kinesisLib.TagFirehose(csvData, client)
+		pkg.TagFirehose(csvData, client)
 	},
 }
 
