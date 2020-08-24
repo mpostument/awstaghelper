@@ -11,20 +11,20 @@ import (
 	"strings"
 )
 
-// getInstances return all elasticsearch from specified region
-func getInstances(client elasticsearchserviceiface.ElasticsearchServiceAPI) *elasticsearchservice.ListDomainNamesOutput {
+// getElasticSearch return all elasticsearch from specified region
+func getElasticSearch(client elasticsearchserviceiface.ElasticsearchServiceAPI) *elasticsearchservice.ListDomainNamesOutput {
 	input := &elasticsearchservice.ListDomainNamesInput{}
 
 	result, err := client.ListDomainNames(input)
 	if err != nil {
-		log.Fatal("Not able to get instances", err)
+		log.Fatal("Not able to get elasticsearch instances", err)
 	}
 	return result
 }
 
-// ParseElasticSearchTags parse output from getInstances and return arn and specified tags.
+// ParseElasticSearchTags parse output from getElasticSearch and return arn and specified tags.
 func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.ElasticsearchServiceAPI, stsClient stsiface.STSAPI, region string) [][]string {
-	instancesOutput := getInstances(client)
+	instancesOutput := getElasticSearch(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
 		log.Fatal("Not able to get account id", err)

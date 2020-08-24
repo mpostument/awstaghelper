@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-// getInstances return all rds instances from specified region
-func getInstances(client rdsiface.RDSAPI) []*rds.DBInstance {
+// getRDSInstances return all rds instances from specified region
+func getRDSInstances(client rdsiface.RDSAPI) []*rds.DBInstance {
 	input := &rds.DescribeDBInstancesInput{}
 
 	var result []*rds.DBInstance
@@ -20,15 +20,15 @@ func getInstances(client rdsiface.RDSAPI) []*rds.DBInstance {
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get instances", err)
+		log.Fatal("Not able to get rds instances", err)
 		return nil
 	}
 	return result
 }
 
-// ParseRdsTags parse output from getInstances and return arn and specified tags.
+// ParseRdsTags parse output from getRDSInstances and return arn and specified tags.
 func ParseRdsTags(tagsToRead string, client rdsiface.RDSAPI) [][]string {
-	instancesOutput := getInstances(client)
+	instancesOutput := getRDSInstances(client)
 	var rows [][]string
 	headers := []string{"Arn"}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)
