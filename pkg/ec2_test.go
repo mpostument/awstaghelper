@@ -1,4 +1,4 @@
-package ec2Lib
+package pkg
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -20,17 +20,17 @@ func (m *mockedEc2) DescribeInstancesPages(input *ec2.DescribeInstancesInput, pa
 }
 
 // Tests
-func TestGetInstances(t *testing.T) {
+func TestGetEC2Instances(t *testing.T) {
 	cases := []*mockedEc2{
 		{
-			respDescribeInstances: parseTagsResponse,
+			respDescribeInstances: parseEC2TagsResponse,
 		},
 	}
 
-	expectedResult := parseTagsResponse.Reservations
+	expectedResult := parseEC2TagsResponse.Reservations
 	for _, c := range cases {
 		t.Run("GetInstances", func(t *testing.T) {
-			result := getInstances(c)
+			result := getEC2Instances(c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
@@ -41,7 +41,7 @@ func TestGetInstances(t *testing.T) {
 func TestParseEc2Tags(t *testing.T) {
 	cases := []*mockedEc2{
 		{
-			respDescribeInstances: parseTagsResponse,
+			respDescribeInstances: parseEC2TagsResponse,
 		},
 	}
 	expectedResult := [][]string{
@@ -50,15 +50,15 @@ func TestParseEc2Tags(t *testing.T) {
 		{"i-777777", "TestInstance2", "Test", "mpostument"},
 	}
 	for _, c := range cases {
-		t.Run("ParseEc2Tags", func(t *testing.T) {
-			result := ParseEc2Tags("Name,Environment,Owner", c)
+		t.Run("ParseEC2Tags", func(t *testing.T) {
+			result := ParseEC2Tags("Name,Environment,Owner", c)
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
 	}
 }
 
-var parseTagsResponse = ec2.DescribeInstancesOutput{
+var parseEC2TagsResponse = ec2.DescribeInstancesOutput{
 	Reservations: []*ec2.Reservation{
 		{
 			Instances: []*ec2.Instance{

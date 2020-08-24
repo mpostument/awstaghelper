@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
-	"awstaghelper/pkg/ec2Lib"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/spf13/cobra"
 )
@@ -46,7 +45,7 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := ec2.New(sess)
-		pkg.WriteCsv(ec2Lib.ParseEc2Tags(tags, client), filename)
+		pkg.WriteCsv(pkg.ParseEC2Tags(tags, client), filename)
 	},
 }
 
@@ -61,7 +60,7 @@ var tagEc2Cmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		csvData := pkg.ReadCsv(filename)
 		client := ec2.New(sess)
-		ec2Lib.TagEc2(csvData, client)
+		pkg.TagEc2(csvData, client)
 	},
 }
 
