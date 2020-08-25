@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
-	"log"
-	"strings"
 )
 
 // getBuckets return all s3 buckets from specified region

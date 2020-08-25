@@ -1,11 +1,12 @@
 package pkg
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elbv2"
 	"github.com/aws/aws-sdk-go/service/elbv2/elbv2iface"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type mockedElbv2 struct {

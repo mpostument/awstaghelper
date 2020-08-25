@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elbv2"
 	"github.com/aws/aws-sdk-go/service/elbv2/elbv2iface"
-	"log"
-	"strings"
 )
 
 // getElbV2 return all elbv2 (application and network) instances from specified region

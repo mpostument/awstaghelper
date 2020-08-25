@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
-	"log"
-	"strings"
 )
 
 // getLambdaFunctions return all lambdas from specified region

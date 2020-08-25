@@ -2,14 +2,15 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
-	"log"
-	"strings"
 )
 
 // getCWAlarm return all CloudWatch alarms from specified region

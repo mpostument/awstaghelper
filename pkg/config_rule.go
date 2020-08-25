@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/configservice"
 	"github.com/aws/aws-sdk-go/service/configservice/configserviceiface"
-	"log"
-	"strings"
 )
 
 // getConfigRules return all config rules from specified region

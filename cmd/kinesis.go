@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
+
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/spf13/cobra"

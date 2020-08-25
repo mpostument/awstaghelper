@@ -1,13 +1,14 @@
 package pkg
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/firehose/firehoseiface"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/aws/aws-sdk-go/service/kinesis/kinesisiface"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type mockedFirehose struct {

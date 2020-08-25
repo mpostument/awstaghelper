@@ -1,13 +1,14 @@
 package pkg
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type mockedCloudWatchAlarm struct {
@@ -87,6 +88,7 @@ var listCloudWatchAlarmsResp = cloudwatch.ListTagsForResourceOutput{
 		},
 	},
 }
+
 type mockedCloudWatchLog struct {
 	cloudwatchlogsiface.CloudWatchLogsAPI
 	respDescribeLogGroups cloudwatchlogs.DescribeLogGroupsOutput

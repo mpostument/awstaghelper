@@ -1,11 +1,12 @@
 package pkg
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/configservice"
 	"github.com/aws/aws-sdk-go/service/configservice/configserviceiface"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type mockedConfigRule struct {

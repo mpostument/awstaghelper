@@ -1,13 +1,14 @@
 package pkg
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice/elasticsearchserviceiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type mockedElasticSearchSts struct {

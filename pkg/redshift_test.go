@@ -1,13 +1,14 @@
 package pkg
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type mockedRedshift struct {

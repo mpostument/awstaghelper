@@ -1,11 +1,12 @@
 package pkg
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type mockedLambda struct {

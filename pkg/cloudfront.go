@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cloudfront"
 	"github.com/aws/aws-sdk-go/service/cloudfront/cloudfrontiface"
-	"log"
-	"strings"
 )
 
 // getDistributions return all cloudfront distributions from specified region

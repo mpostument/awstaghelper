@@ -1,11 +1,12 @@
 package pkg
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/aws/aws-sdk-go/service/rds/rdsiface"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type mockedRds struct {

@@ -2,14 +2,15 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/firehose/firehoseiface"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/aws/aws-sdk-go/service/kinesis/kinesisiface"
-	"log"
-	"strings"
 )
 
 // getFirehoses return all firehoses from specified region

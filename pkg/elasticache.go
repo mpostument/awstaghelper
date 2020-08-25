@@ -2,14 +2,15 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elasticache"
 	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
-	"log"
-	"strings"
 )
 
 // getElastiCacheClusters return all ElastiCache from specified region
