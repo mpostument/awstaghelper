@@ -20,7 +20,7 @@ func getElbV2(client elbv2iface.ELBV2API) []*elbv2.LoadBalancer {
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get load balancer", err)
+		log.Fatal("Not able to get load balancers", err)
 		return nil
 	}
 	return result
@@ -36,7 +36,7 @@ func ParseElbV2Tags(tagsToRead string, client elbv2iface.ELBV2API) [][]string {
 	for _, elb := range instancesOutput {
 		elbTags, err := client.DescribeTags(&elbv2.DescribeTagsInput{ResourceArns: []*string{elb.LoadBalancerArn}})
 		if err != nil {
-			fmt.Println("Not able to get lambda tags", err)
+			fmt.Println("Not able to get load balancer tags", err)
 		}
 		tags := map[string]string{}
 		for _, tagsToWrite := range elbTags.TagDescriptions {

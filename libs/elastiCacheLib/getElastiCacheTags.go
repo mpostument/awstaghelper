@@ -11,8 +11,8 @@ import (
 	"strings"
 )
 
-// getInstances return all ElastiCache from specified region
-func getInstances(client elasticacheiface.ElastiCacheAPI) []*elasticache.CacheCluster {
+// getElastiCache return all ElastiCache from specified region
+func getElastiCache(client elasticacheiface.ElastiCacheAPI) []*elasticache.CacheCluster {
 	input := &elasticache.DescribeCacheClustersInput{}
 
 	var result []*elasticache.CacheCluster
@@ -23,15 +23,15 @@ func getInstances(client elasticacheiface.ElastiCacheAPI) []*elasticache.CacheCl
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get instances", err)
+		log.Fatal("Not able to get elasticache instances", err)
 		return nil
 	}
 	return result
 }
 
-// ParseElastiCacheTags parse output from getInstances and return arn and specified tags.
+// ParseElastiCacheTags parse output from getElastiCache and return arn and specified tags.
 func ParseElastiCacheTags(tagsToRead string, client elasticacheiface.ElastiCacheAPI, stsClient stsiface.STSAPI, region string) [][]string {
-	instancesOutput := getInstances(client)
+	instancesOutput := getElastiCache(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
 		log.Fatal("Not able to get account id", err)

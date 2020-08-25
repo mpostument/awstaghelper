@@ -14,7 +14,7 @@ func getConfigRules(client configserviceiface.ConfigServiceAPI) *configservice.D
 
 	result, err := client.DescribeConfigRules(input)
 	if err != nil {
-		log.Fatal("Not able to get log groups", err)
+		log.Fatal("Not able to get config rules", err)
 		return nil
 	}
 	return result
@@ -34,7 +34,7 @@ func ParseConfigRuleTags(tagsToRead string, client configserviceiface.ConfigServ
 		}
 		configTags, err := client.ListTagsForResource(input)
 		if err != nil {
-			fmt.Println("Not able to get config rules", err)
+			fmt.Println("Not able to get config rule tags", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range configTags.Tags {

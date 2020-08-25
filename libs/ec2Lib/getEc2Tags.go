@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-// getInstances return all ec2 instances from specified region
-func getInstances(client ec2iface.EC2API) []*ec2.Reservation {
+// getEc2 return all ec2 instances from specified region
+func getEc2(client ec2iface.EC2API) []*ec2.Reservation {
 	input := &ec2.DescribeInstancesInput{}
 
 	var result []*ec2.Reservation
@@ -24,9 +24,9 @@ func getInstances(client ec2iface.EC2API) []*ec2.Reservation {
 	return result
 }
 
-// ParseEc2Tags parse output from getInstances and return instances id and specified tags.
+// ParseEc2Tags parse output from getEc2 and return instances id and specified tags.
 func ParseEc2Tags(tagsToRead string, client ec2iface.EC2API) [][]string {
-	instancesOutput := getInstances(client)
+	instancesOutput := getEc2(client)
 	var rows [][]string
 	headers := []string{"Id"}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)

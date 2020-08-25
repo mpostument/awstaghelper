@@ -15,7 +15,7 @@ func getFirehoses(client firehoseiface.FirehoseAPI) *firehose.ListDeliveryStream
 
 	result, err := client.ListDeliveryStreams(input)
 	if err != nil {
-		log.Fatal("Not able to get list of buckets", err)
+		log.Fatal("Not able to get list of firehose streams", err)
 	}
 	return result
 }
@@ -34,7 +34,7 @@ func ParseFirehoseTags(tagsToRead string, client firehoseiface.FirehoseAPI) [][]
 		}
 		distributionTags, err := client.ListTagsForDeliveryStream(input)
 		if err != nil {
-			fmt.Println("Not able to get kinesis tags", err)
+			fmt.Println("Not able to get firehose tags", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range distributionTags.Tags {
