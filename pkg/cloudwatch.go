@@ -25,7 +25,7 @@ func getCWAlarm(client cloudwatchiface.CloudWatchAPI) []*cloudwatch.MetricAlarm 
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get log groups", err)
+		log.Fatal("Not able to get alarms", err)
 		return nil
 	}
 	return result
@@ -45,7 +45,7 @@ func ParseCwAlarmTags(tagsToRead string, client cloudwatchiface.CloudWatchAPI) [
 		}
 		cwLogTags, err := client.ListTagsForResource(input)
 		if err != nil {
-			fmt.Println("Not able to get log group tags", err)
+			fmt.Println("Not able to get alarm tags", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range cwLogTags.Tags {

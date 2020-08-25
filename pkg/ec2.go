@@ -23,7 +23,7 @@ func getEC2Instances(client ec2iface.EC2API) []*ec2.Reservation {
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get instances", err)
+		log.Fatal("Not able to get ec2 instances", err)
 	}
 	return result
 }
