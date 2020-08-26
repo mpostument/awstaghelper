@@ -2,7 +2,7 @@
 
 ### Painless AWS tagging
 
-awstaghelper allow tagging hundreds of AWS resources in few commands
+Tags are critical to managing AWS resources at scale. Awstaghelper provides a command line tool to ease adding and managing tags to and from CSV files across the wide range of AWS resources.
 
 ## Table of Contents
 
@@ -23,6 +23,7 @@ awstaghelper allow tagging hundreds of AWS resources in few commands
   * [ElbV2](#elbv2)
   * [Kinesis Stream](#kinesis-stream)
   * [Kinesis Firehose](#kinesis-firehose)
+  * [Iam User](#iam-user)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -232,6 +233,20 @@ Example:
 Read csv and tag kinesis firehose - `awstaghelper kinesis tag-firehose`  
 Example:
 `awstaghelper kinesis tag-firehose --filename firehoseTag.csv --profile main`  
+
+### Iam User
+
+#### Get user tags
+
+Get list of iam user with required tags - `awstaghelper iam get-user-tags`  
+Example:
+`awstaghelper iam get-user-tags --filename userTag.csv --tags Name,Owner --profile main`
+
+#### Tag user
+
+Read csv and tag iam user - `awstaghelper iam tag-user`  
+Example:
+`awstaghelper iam tag-user --filename firehoseTag.csv --profile main`  
 
 ## Global parameters
 
