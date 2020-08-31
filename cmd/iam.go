@@ -61,8 +61,43 @@ var tagIamUserCmd = &cobra.Command{
 	},
 }
 
+var getIamRolesCmd = &cobra.Command{
+	Use:   "get-role-tags",
+	Short: "Write role name and required tags to csv",
+	Long: `Write to csv data with role name and required tags to csv. 
+This csv can be used with tag-role command to tag aws environment.
+Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
+Csv filename can be specified with flag filename.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		tags, _ := cmd.Flags().GetString("tags")
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := pkg.GetSession(region, profile)
+		client := iam.New(sess)
+		pkg.WriteCsv(pkg.ParseIamRolesTags(tags, client), filename)
+	},
+}
+
+var tagIamRoleCmd = &cobra.Command{
+	Use:   "tag-role",
+	Short: "Read csv and tag iam role with csv data",
+	Long:  `Read csv generated with get-roles-tags command and tag iam role with tags from csv.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		filename, _ := cmd.Flags().GetString("filename")
+		profile, _ := cmd.Flags().GetString("profile")
+		region, _ := cmd.Flags().GetString("region")
+		sess := pkg.GetSession(region, profile)
+		client := iam.New(sess)
+		csvData := pkg.ReadCsv(filename)
+		pkg.TagIamRole(csvData, client)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(iamCmd)
 	iamCmd.AddCommand(getIamUsersCmd)
 	iamCmd.AddCommand(tagIamUserCmd)
+	iamCmd.AddCommand(getIamRolesCmd)
+	iamCmd.AddCommand(tagIamRoleCmd)
 }

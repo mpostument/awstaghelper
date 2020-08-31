@@ -83,3 +83,77 @@ func TagIamUser(csvData [][]string, client iamiface.IAMAPI) {
 		}
 	}
 }
+
+func getIamRoles(client iamiface.IAMAPI) []*iam.Role {
+	input := &iam.ListRolesInput{}
+
+	var result []*iam.Role
+
+	err := client.ListRolesPages(input,
+		func(page *iam.ListRolesOutput, lastPage bool) bool {
+			result = append(result, page.Roles...)
+			return !lastPage
+		})
+	if err != nil {
+		log.Fatal("Not able to get iam roles", err)
+		return nil
+	}
+	return result
+}
+
+// ParseIamRolesTags parse output from getIamRoles and return roles and specified tags.
+func ParseIamRolesTags(tagsToRead string, client iamiface.IAMAPI) [][]string {
+	usersList := getIamRoles(client)
+	var rows [][]string
+	headers := []string{"RoleName"}
+	headers = append(headers, strings.Split(tagsToRead, ",")...)
+	rows = append(rows, headers)
+	for _, role := range usersList {
+		roleTags, err := client.ListRoleTags(&iam.ListRoleTagsInput{RoleName: role.RoleName})
+		if err != nil {
+			fmt.Println("Not able to get iam roles tags", err)
+		}
+		tags := map[string]string{}
+		for _, tag := range roleTags.Tags {
+			tags[*tag.Key] = *tag.Value
+		}
+
+		var resultTags []string
+		for _, key := range strings.Split(tagsToRead, ",") {
+			resultTags = append(resultTags, tags[key])
+		}
+		rows = append(rows, append([]string{*role.RoleName}, resultTags...))
+	}
+	return rows
+}
+
+// TagIamRole tag iam user. Take as input data from csv file. Where first column is name
+func TagIamRole(csvData [][]string, client iamiface.IAMAPI) {
+	var tags []*iam.Tag
+	for r := 1; r < len(csvData); r++ {
+		for c := 1; c < len(csvData[0]); c++ {
+			tags = append(tags, &iam.Tag{
+				Key:   &csvData[0][c],
+				Value: &csvData[r][c],
+			})
+		}
+
+		input := &iam.TagRoleInput{
+			RoleName: aws.String(csvData[r][0]),
+			Tags:     tags,
+		}
+
+		_, err := client.TagRole(input)
+		if err != nil {
+			if aerr, ok := err.(awserr.Error); ok {
+				switch aerr.Code() {
+				default:
+					fmt.Println(aerr.Error())
+				}
+			} else {
+				fmt.Println(err.Error())
+			}
+			return
+		}
+	}
+}
