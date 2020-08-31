@@ -24,6 +24,7 @@ Tags are critical to managing AWS resources at scale. Awstaghelper provides a co
   * [Kinesis Stream](#kinesis-stream)
   * [Kinesis Firehose](#kinesis-firehose)
   * [Iam User](#iam-user)
+  * [Iam Role](#iam-role)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -246,7 +247,21 @@ Example:
 
 Read csv and tag iam user - `awstaghelper iam tag-user`  
 Example:
-`awstaghelper iam tag-user --filename firehoseTag.csv --profile main`  
+`awstaghelper iam tag-user --filename userTag.csv --profile main`  
+
+### Iam Role
+
+#### Get role tags
+
+Get list of iam role with required tags - `awstaghelper iam get-role-tags`  
+Example:
+`awstaghelper iam get-role-tags --filename roleTag.csv --tags Name,Owner --profile main`
+
+#### Tag role
+
+Read csv and tag iam user - `awstaghelper iam tag-role`  
+Example:
+`awstaghelper iam tag-role --filename roleTag.csv --profile main`  
 
 ## Global parameters
 
