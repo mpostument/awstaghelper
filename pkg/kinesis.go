@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/firehose/firehoseiface"
 	"github.com/aws/aws-sdk-go/service/kinesis"
@@ -27,10 +26,7 @@ func getFirehoses(client firehoseiface.FirehoseAPI) *firehose.ListDeliveryStream
 // ParseKinesisTags parse output from getFirehoses and return firehose name and specified tags.
 func ParseFirehoseTags(tagsToRead string, client firehoseiface.FirehoseAPI) [][]string {
 	instancesOutput := getFirehoses(client)
-	var rows [][]string
-	headers := []string{"Name"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeaders(tagsToRead, "Name")
 	for _, stream := range instancesOutput.DeliveryStreamNames {
 
 		input := &firehose.ListTagsForDeliveryStreamInput{
@@ -75,10 +71,7 @@ func getStreams(client kinesisiface.KinesisAPI) []*string {
 // ParseKinesisTags parse output from getStreams and return kinesis arn and specified tags.
 func ParseKinesisTags(tagsToRead string, client kinesisiface.KinesisAPI) [][]string {
 	instancesOutput := getStreams(client)
-	var rows [][]string
-	headers := []string{"Name"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeaders(tagsToRead, "Name")
 	for _, stream := range instancesOutput {
 
 		input := &kinesis.ListTagsForStreamInput{
@@ -104,8 +97,8 @@ func ParseKinesisTags(tagsToRead string, client kinesisiface.KinesisAPI) [][]str
 
 // TagFirehose tag kinesis firehose. Take as input data from csv file. Where first column name
 func TagFirehose(csvData [][]string, client firehoseiface.FirehoseAPI) {
-	var tags []*firehose.Tag
 	for r := 1; r < len(csvData); r++ {
+		var tags []*firehose.Tag
 		for c := 1; c < len(csvData[0]); c++ {
 			tags = append(tags, &firehose.Tag{
 				Key:   &csvData[0][c],
@@ -119,15 +112,8 @@ func TagFirehose(csvData [][]string, client firehoseiface.FirehoseAPI) {
 		}
 
 		_, err := client.TagDeliveryStream(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		tags = nil
+		if awsErrorHandle(err) {
 			return
 		}
 	}
@@ -135,9 +121,8 @@ func TagFirehose(csvData [][]string, client firehoseiface.FirehoseAPI) {
 
 // TagKinesisStream tag kinesis stream. Take as input data from csv file. Where first column id
 func TagKinesisStream(csvData [][]string, client kinesisiface.KinesisAPI) {
-
-	tags := make(map[string]*string)
 	for r := 1; r < len(csvData); r++ {
+		tags := make(map[string]*string)
 		for c := 1; c < len(csvData[0]); c++ {
 			tags[csvData[0][c]] = &csvData[r][c]
 		}
@@ -148,15 +133,7 @@ func TagKinesisStream(csvData [][]string, client kinesisiface.KinesisAPI) {
 		}
 
 		_, err := client.AddTagsToStream(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}

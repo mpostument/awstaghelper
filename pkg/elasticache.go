@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elasticache"
 	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 	"github.com/aws/aws-sdk-go/service/sts"
@@ -38,10 +37,7 @@ func ParseElastiCacheClusterTags(tagsToRead string, client elasticacheiface.Elas
 	if err != nil {
 		log.Fatal("Not able to get account id", err)
 	}
-	var rows [][]string
-	headers := []string{"Arn"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeaders(tagsToRead, "Arn")
 	for _, elasticCacheInstance := range instancesOutput {
 
 		clusterArn := fmt.Sprintf("arn:aws:elasticache:%s:%s:cluster:%s",
@@ -70,9 +66,8 @@ func ParseElastiCacheClusterTags(tagsToRead string, client elasticacheiface.Elas
 
 // TagElastiCache tag instances. Take as input data from csv file. Where first column id
 func TagElastiCache(csvData [][]string, client elasticacheiface.ElastiCacheAPI) {
-
-	var tags []*elasticache.Tag
 	for r := 1; r < len(csvData); r++ {
+		var tags []*elasticache.Tag
 		for c := 1; c < len(csvData[0]); c++ {
 			tags = append(tags, &elasticache.Tag{
 				Key:   &csvData[0][c],
@@ -86,15 +81,7 @@ func TagElastiCache(csvData [][]string, client elasticacheiface.ElastiCacheAPI) 
 		}
 
 		_, err := client.AddTagsToResource(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}

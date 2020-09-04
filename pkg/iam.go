@@ -3,7 +3,6 @@ package pkg
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/iam/iamiface"
 	"log"
@@ -55,8 +54,8 @@ func ParseIamUserTags(tagsToRead string, client iamiface.IAMAPI) [][]string {
 
 // TagIamUser tag iam user. Take as input data from csv file. Where first column is name
 func TagIamUser(csvData [][]string, client iamiface.IAMAPI) {
-	var tags []*iam.Tag
 	for r := 1; r < len(csvData); r++ {
+		var tags []*iam.Tag
 		for c := 1; c < len(csvData[0]); c++ {
 			tags = append(tags, &iam.Tag{
 				Key:   &csvData[0][c],
@@ -70,15 +69,7 @@ func TagIamUser(csvData [][]string, client iamiface.IAMAPI) {
 		}
 
 		_, err := client.TagUser(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}
@@ -104,10 +95,7 @@ func getIamRoles(client iamiface.IAMAPI) []*iam.Role {
 // ParseIamRolesTags parse output from getIamRoles and return roles and specified tags.
 func ParseIamRolesTags(tagsToRead string, client iamiface.IAMAPI) [][]string {
 	usersList := getIamRoles(client)
-	var rows [][]string
-	headers := []string{"RoleName"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeaders(tagsToRead, "RoleName")
 	for _, role := range usersList {
 		roleTags, err := client.ListRoleTags(&iam.ListRoleTagsInput{RoleName: role.RoleName})
 		if err != nil {
@@ -129,8 +117,8 @@ func ParseIamRolesTags(tagsToRead string, client iamiface.IAMAPI) [][]string {
 
 // TagIamRole tag iam user. Take as input data from csv file. Where first column is name
 func TagIamRole(csvData [][]string, client iamiface.IAMAPI) {
-	var tags []*iam.Tag
 	for r := 1; r < len(csvData); r++ {
+		var tags []*iam.Tag
 		for c := 1; c < len(csvData[0]); c++ {
 			tags = append(tags, &iam.Tag{
 				Key:   &csvData[0][c],
@@ -144,15 +132,7 @@ func TagIamRole(csvData [][]string, client iamiface.IAMAPI) {
 		}
 
 		_, err := client.TagRole(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}

@@ -17,23 +17,23 @@ package cmd
 
 import (
 	"awstaghelper/pkg"
+	"github.com/aws/aws-sdk-go/service/ecr"
 
-	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/spf13/cobra"
 )
 
-// lambdaCmd represents the lambda command
-var lambdaCmd = &cobra.Command{
-	Use:   "lambda",
-	Short: "Root command for interaction with AWS lambda services",
-	Long:  `Root command for interaction with AWS lambda services.`,
+// ecrCmd represents the ecr command
+var ecrCmd = &cobra.Command{
+	Use:   "ecr",
+	Short: "Root command for interaction with AWS ecr services",
+	Long:  `Root command for interaction with AWS ecr services.`,
 }
 
-var getLambdaCmd = &cobra.Command{
-	Use:   "get-lambda-tags",
-	Short: "Write lambda id and required tags to csv",
-	Long: `Write to csv data with lambda id and required tags to csv. 
-This csv can be used with tag-lambda command to tag aws environment.
+var getEcrTagsCmd = &cobra.Command{
+	Use:   "get-repository-tags",
+	Short: "Write arn and required tags to csv",
+	Long: `Write to csv data with arn and required tags to csv. 
+This csv can be used with tag-repository command to tag aws environment.
 Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
 Csv filename can be specified with flag filename.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -42,28 +42,28 @@ Csv filename can be specified with flag filename.`,
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
-		client := lambda.New(sess)
-		pkg.WriteCsv(pkg.ParseLambdaFunctionTags(tags, client), filename)
+		client := ecr.New(sess)
+		pkg.WriteCsv(pkg.ParseEcrRepositoriesTags(tags, client), filename)
 	},
 }
 
-var tagLambdaCmd = &cobra.Command{
-	Use:   "tag-lambda",
-	Short: "Read csv and tag lambda with csv data",
-	Long:  `Read csv generated with get-lambdas-tags command and tag lambda instances with tags from csv.`,
+var tagEcrRepoCmd = &cobra.Command{
+	Use:   "tag-repository",
+	Short: "Read csv and tag ecr repository with csv data",
+	Long:  `Read csv generated with get-repository-tags command and tag ecr repository with tags from csv.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
-		client := lambda.New(sess)
+		client := ecr.New(sess)
 		csvData := pkg.ReadCsv(filename)
-		pkg.TagLambda(csvData, client)
+		pkg.TagEcrRepo(csvData, client)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(lambdaCmd)
-	lambdaCmd.AddCommand(getLambdaCmd)
-	lambdaCmd.AddCommand(tagLambdaCmd)
+	rootCmd.AddCommand(ecrCmd)
+	ecrCmd.AddCommand(tagEcrRepoCmd)
+	ecrCmd.AddCommand(getEcrTagsCmd)
 }

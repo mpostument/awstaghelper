@@ -1,5 +1,5 @@
 /*
-Copyright © 2020 NAME HERE <EMAIL ADDRESS>
+Copyright © 2020 Maksym Postument 777rip777@gmail.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,9 +27,6 @@ var s3Cmd = &cobra.Command{
 	Use:   "s3",
 	Short: "Root command for interaction with AWS s3 services",
 	Long:  `Root command for interaction with AWS s3 services.`,
-	//Run: func(cmd *cobra.Command, args []string) {
-	//	fmt.Println("s3 called")
-	//},
 }
 
 var getS3Cmd = &cobra.Command{

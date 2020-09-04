@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"log"
 	"os"
+	"strings"
 )
 
 func WriteCsv(data [][]string, filename string) {
@@ -37,4 +38,12 @@ func ReadCsv(filename string) [][]string {
 	}
 
 	return csvLines
+}
+
+func addHeaders(tagsToRead string, resourceIdHeader string) [][]string {
+	var rows [][]string
+	headers := []string{resourceIdHeader}
+	headers = append(headers, strings.Split(tagsToRead, ",")...)
+	rows = append(rows, headers)
+	return rows
 }
