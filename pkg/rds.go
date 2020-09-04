@@ -2,12 +2,10 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/aws/aws-sdk-go/service/rds/rdsiface"
+	"log"
 )
 
 // getRDSInstances return all rds instances from specified region
@@ -31,7 +29,7 @@ func getRDSInstances(client rdsiface.RDSAPI) []*rds.DBInstance {
 // ParseRDSTags parse output from getRDSInstances and return arn and specified tags.
 func ParseRDSTags(tagsToRead string, client rdsiface.RDSAPI) [][]string {
 	instancesOutput := getRDSInstances(client)
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, dbInstances := range instancesOutput {
 		rdsTags, err := client.ListTagsForResource(&rds.ListTagsForResourceInput{ResourceName: dbInstances.DBInstanceArn})
 		if err != nil {
@@ -41,11 +39,7 @@ func ParseRDSTags(tagsToRead string, client rdsiface.RDSAPI) [][]string {
 		for _, tag := range rdsTags.TagList {
 			tags[*tag.Key] = *tag.Value
 		}
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*dbInstances.DBInstanceArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *dbInstances.DBInstanceArn)
 	}
 	return rows
 }

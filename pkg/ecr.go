@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/aws/aws-sdk-go/service/ecr/ecriface"
 	"log"
-	"strings"
 )
 
 func getEcrRepositories(client ecriface.ECRAPI) []*ecr.Repository {
@@ -29,7 +28,7 @@ func getEcrRepositories(client ecriface.ECRAPI) []*ecr.Repository {
 // ParseEcrRepositoriesTags parse output from getEcrRepositories and return repo arn and specified tags.
 func ParseEcrRepositoriesTags(tagsToRead string, client ecriface.ECRAPI) [][]string {
 	repoList := getEcrRepositories(client)
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, repo := range repoList {
 		repoTags, err := client.ListTagsForResource(&ecr.ListTagsForResourceInput{ResourceArn: repo.RepositoryArn})
 		if err != nil {
@@ -39,12 +38,7 @@ func ParseEcrRepositoriesTags(tagsToRead string, client ecriface.ECRAPI) [][]str
 		for _, tag := range repoTags.Tags {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*repo.RepositoryArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *repo.RepositoryArn)
 	}
 	return rows
 }

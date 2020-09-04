@@ -40,10 +40,19 @@ func ReadCsv(filename string) [][]string {
 	return csvLines
 }
 
-func addHeaders(tagsToRead string, resourceIdHeader string) [][]string {
+func addHeadersToCsv(tagsToRead string, resourceIdHeader string) [][]string {
 	var rows [][]string
 	headers := []string{resourceIdHeader}
 	headers = append(headers, strings.Split(tagsToRead, ",")...)
 	rows = append(rows, headers)
+	return rows
+}
+
+func addTagsToCsv(tagsToRead string, tags map[string]string, rows [][]string, resourceId string) [][]string {
+	var resultTags []string
+	for _, key := range strings.Split(tagsToRead, ",") {
+		resultTags = append(resultTags, tags[key])
+	}
+	rows = append(rows, append([]string{resourceId}, resultTags...))
 	return rows
 }

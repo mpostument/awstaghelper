@@ -2,14 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/firehose/firehoseiface"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/aws/aws-sdk-go/service/kinesis/kinesisiface"
+	"log"
 )
 
 // getFirehoses return all firehoses from specified region
@@ -26,7 +24,7 @@ func getFirehoses(client firehoseiface.FirehoseAPI) *firehose.ListDeliveryStream
 // ParseKinesisTags parse output from getFirehoses and return firehose name and specified tags.
 func ParseFirehoseTags(tagsToRead string, client firehoseiface.FirehoseAPI) [][]string {
 	instancesOutput := getFirehoses(client)
-	rows := addHeaders(tagsToRead, "Name")
+	rows := addHeadersToCsv(tagsToRead, "Name")
 	for _, stream := range instancesOutput.DeliveryStreamNames {
 
 		input := &firehose.ListTagsForDeliveryStreamInput{
@@ -40,12 +38,7 @@ func ParseFirehoseTags(tagsToRead string, client firehoseiface.FirehoseAPI) [][]
 		for _, tag := range distributionTags.Tags {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*stream}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *stream)
 	}
 	return rows
 }
@@ -71,7 +64,7 @@ func getStreams(client kinesisiface.KinesisAPI) []*string {
 // ParseKinesisTags parse output from getStreams and return kinesis arn and specified tags.
 func ParseKinesisTags(tagsToRead string, client kinesisiface.KinesisAPI) [][]string {
 	instancesOutput := getStreams(client)
-	rows := addHeaders(tagsToRead, "Name")
+	rows := addHeadersToCsv(tagsToRead, "Name")
 	for _, stream := range instancesOutput {
 
 		input := &kinesis.ListTagsForStreamInput{
@@ -85,12 +78,7 @@ func ParseKinesisTags(tagsToRead string, client kinesisiface.KinesisAPI) [][]str
 		for _, tag := range distributionTags.Tags {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*stream}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *stream)
 	}
 	return rows
 }

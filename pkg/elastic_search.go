@@ -2,14 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice/elasticsearchserviceiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
+	"log"
 )
 
 // getElasticSearchDomains return all elasticsearch from specified region
@@ -30,7 +28,7 @@ func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.
 	if err != nil {
 		log.Fatal("Not able to get account id", err)
 	}
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, elasticCacheInstance := range instancesOutput.DomainNames {
 
 		clusterArn := fmt.Sprintf("arn:aws:es:%s:%s:domain/%s",
@@ -47,12 +45,7 @@ func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.
 		for _, tag := range elasticSearchTags.TagList {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{clusterArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, clusterArn)
 	}
 	return rows
 }

@@ -1,12 +1,10 @@
 package pkg
 
 import (
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
+	"log"
 )
 
 // getEC2Instances return all ec2 instances from specified region
@@ -29,18 +27,14 @@ func getEC2Instances(client ec2iface.EC2API) []*ec2.Reservation {
 // ParseEC2Tags parse output from getEC2Instances and return instances id and specified tags.
 func ParseEC2Tags(tagsToRead string, client ec2iface.EC2API) [][]string {
 	instancesOutput := getEC2Instances(client)
-	rows := addHeaders(tagsToRead, "Id")
+	rows := addHeadersToCsv(tagsToRead, "Id")
 	for _, reservation := range instancesOutput {
 		for _, instance := range reservation.Instances {
 			tags := map[string]string{}
 			for _, tag := range instance.Tags {
 				tags[*tag.Key] = *tag.Value
 			}
-			var resultTags []string
-			for _, key := range strings.Split(tagsToRead, ",") {
-				resultTags = append(resultTags, tags[key])
-			}
-			rows = append(rows, append([]string{*instance.InstanceId}, resultTags...))
+			rows = addTagsToCsv(tagsToRead, tags, rows, *instance.InstanceId)
 		}
 	}
 	return rows

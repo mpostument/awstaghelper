@@ -2,12 +2,10 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
+	"log"
 )
 
 // getLambdaFunctions return all lambdas from specified region
@@ -31,7 +29,7 @@ func getLambdaFunctions(client lambdaiface.LambdaAPI) []*lambda.FunctionConfigur
 // ParseLambdaFunctionTags parse output from getLambdaFunctions and return arn and specified tags.
 func ParseLambdaFunctionTags(tagsToRead string, client lambdaiface.LambdaAPI) [][]string {
 	instancesOutput := getLambdaFunctions(client)
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, lambdaOutput := range instancesOutput {
 		lambdaTags, err := client.ListTags(&lambda.ListTagsInput{Resource: lambdaOutput.FunctionArn})
 		if err != nil {
@@ -41,12 +39,7 @@ func ParseLambdaFunctionTags(tagsToRead string, client lambdaiface.LambdaAPI) []
 		for key, value := range lambdaTags.Tags {
 			tags[key] = *value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*lambdaOutput.FunctionArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *lambdaOutput.FunctionArn)
 	}
 	return rows
 }

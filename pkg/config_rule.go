@@ -2,12 +2,10 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/configservice"
 	"github.com/aws/aws-sdk-go/service/configservice/configserviceiface"
+	"log"
 )
 
 // getConfigRules return all config rules from specified region
@@ -25,7 +23,7 @@ func getConfigRules(client configserviceiface.ConfigServiceAPI) *configservice.D
 // ParseConfigRuleTags parse output from getCWAlarm and return alarm arn and specified tags.
 func ParseConfigRuleTags(tagsToRead string, client configserviceiface.ConfigServiceAPI) [][]string {
 	instancesOutput := getConfigRules(client)
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, rule := range instancesOutput.ConfigRules {
 
 		input := &configservice.ListTagsForResourceInput{
@@ -39,12 +37,7 @@ func ParseConfigRuleTags(tagsToRead string, client configserviceiface.ConfigServ
 		for _, tag := range configTags.Tags {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*rule.ConfigRuleArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *rule.ConfigRuleArn)
 	}
 	return rows
 }

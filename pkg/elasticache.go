@@ -2,14 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticache"
 	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
+	"log"
 )
 
 // getElastiCacheClusters return all ElastiCache from specified region
@@ -37,7 +35,7 @@ func ParseElastiCacheClusterTags(tagsToRead string, client elasticacheiface.Elas
 	if err != nil {
 		log.Fatal("Not able to get account id", err)
 	}
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, elasticCacheInstance := range instancesOutput {
 
 		clusterArn := fmt.Sprintf("arn:aws:elasticache:%s:%s:cluster:%s",
@@ -54,12 +52,7 @@ func ParseElastiCacheClusterTags(tagsToRead string, client elasticacheiface.Elas
 		for _, tag := range elasticCacheTag.TagList {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{clusterArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, clusterArn)
 	}
 	return rows
 }

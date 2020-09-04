@@ -2,14 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
+	"log"
 )
 
 // getCWAlarm return all CloudWatch alarms from specified region
@@ -33,7 +31,7 @@ func getCWAlarm(client cloudwatchiface.CloudWatchAPI) []*cloudwatch.MetricAlarm 
 // ParseCwAlarmTags parse output from getCWAlarm and return alarm arn and specified tags.
 func ParseCwAlarmTags(tagsToRead string, client cloudwatchiface.CloudWatchAPI) [][]string {
 	instancesOutput := getCWAlarm(client)
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, alarm := range instancesOutput {
 
 		input := &cloudwatch.ListTagsForResourceInput{
@@ -47,12 +45,7 @@ func ParseCwAlarmTags(tagsToRead string, client cloudwatchiface.CloudWatchAPI) [
 		for _, tag := range cwLogTags.Tags {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*alarm.AlarmArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *alarm.AlarmArn)
 	}
 	return rows
 }
@@ -78,7 +71,7 @@ func getCWLogGroups(client cloudwatchlogsiface.CloudWatchLogsAPI) []*cloudwatchl
 // ParseCwLogGroupTags parse output from getInstances and return logGroupName and specified tags.
 func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatchLogsAPI) [][]string {
 	instancesOutput := getCWLogGroups(client)
-	rows := addHeaders(tagsToRead, "LogGroupName")
+	rows := addHeadersToCsv(tagsToRead, "LogGroupName")
 	for _, logGroup := range instancesOutput {
 
 		input := &cloudwatchlogs.ListTagsLogGroupInput{
@@ -92,12 +85,7 @@ func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatc
 		for key, value := range cwLogTags.Tags {
 			tags[key] = *value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*logGroup.LogGroupName}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *logGroup.LogGroupName)
 	}
 	return rows
 }

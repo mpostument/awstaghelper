@@ -2,13 +2,11 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"log"
 )
 
 // getBuckets return all s3 buckets from specified region
@@ -26,7 +24,7 @@ func getBuckets(client s3iface.S3API) *s3.ListBucketsOutput {
 // ParseS3Tags parse output from getBuckets and return instances id and specified tags.
 func ParseS3Tags(tagsToRead string, client s3iface.S3API) [][]string {
 	s3Output := getBuckets(client)
-	rows := addHeaders(tagsToRead, "Name")
+	rows := addHeadersToCsv(tagsToRead, "Name")
 	for _, bucket := range s3Output.Buckets {
 		s3Tags, err := client.GetBucketTagging(&s3.GetBucketTaggingInput{Bucket: bucket.Name})
 		if err != nil {
@@ -42,11 +40,7 @@ func ParseS3Tags(tagsToRead string, client s3iface.S3API) [][]string {
 		for _, tag := range s3Tags.TagSet {
 			tags[*tag.Key] = *tag.Value
 		}
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*bucket.Name}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *bucket.Name)
 	}
 	return rows
 }

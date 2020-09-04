@@ -2,12 +2,10 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudfront"
 	"github.com/aws/aws-sdk-go/service/cloudfront/cloudfrontiface"
+	"log"
 )
 
 // getDistributions return all cloudfront distributions from specified region
@@ -25,7 +23,7 @@ func getDistributions(client cloudfrontiface.CloudFrontAPI) *cloudfront.ListDist
 // ParseDistributionsTags parse output from getDistributions and return distribution arn and specified tags.
 func ParseDistributionsTags(tagsToRead string, client cloudfrontiface.CloudFrontAPI) [][]string {
 	instancesOutput := getDistributions(client)
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, distribution := range instancesOutput.DistributionList.Items {
 
 		input := &cloudfront.ListTagsForResourceInput{
@@ -39,12 +37,7 @@ func ParseDistributionsTags(tagsToRead string, client cloudfrontiface.CloudFront
 		for _, tag := range distributionTags.Tags.Items {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*distribution.ARN}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *distribution.ARN)
 	}
 	return rows
 }

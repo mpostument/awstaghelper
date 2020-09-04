@@ -31,7 +31,7 @@ func getElbV2(client elbv2iface.ELBV2API) []*elbv2.LoadBalancer {
 // ParseElbV2Tags parse output from getInstances and return instances id and specified tags.
 func ParseElbV2Tags(tagsToRead string, client elbv2iface.ELBV2API) [][]string {
 	instancesOutput := getElbV2(client)
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, elb := range instancesOutput {
 		elbTags, err := client.DescribeTags(&elbv2.DescribeTagsInput{ResourceArns: []*string{elb.LoadBalancerArn}})
 		if err != nil {
@@ -48,7 +48,7 @@ func ParseElbV2Tags(tagsToRead string, client elbv2iface.ELBV2API) [][]string {
 		for _, key := range strings.Split(tagsToRead, ",") {
 			resultTags = append(resultTags, tags[key])
 		}
-		rows = append(rows, append([]string{*elb.LoadBalancerArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *elb.LoadBalancerArn)
 	}
 	return rows
 }

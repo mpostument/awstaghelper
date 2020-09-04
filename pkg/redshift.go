@@ -2,14 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
+	"log"
 )
 
 // getRedshiftInstances return all redshift instances from specified region
@@ -38,7 +36,7 @@ func ParseRedshiftTags(tagsToRead string, client redshiftiface.RedshiftAPI, stsC
 	if err != nil {
 		log.Fatal("Not able to get account id", err)
 	}
-	rows := addHeaders(tagsToRead, "Arn")
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, redshiftInstances := range instancesOutput {
 		clusterArn := fmt.Sprintf("arn:aws:redshift:%s:%s:cluster:%s",
 			region, *callerIdentity.Account, *redshiftInstances.ClusterIdentifier)
@@ -50,11 +48,7 @@ func ParseRedshiftTags(tagsToRead string, client redshiftiface.RedshiftAPI, stsC
 		for _, tag := range redshiftTags.TaggedResources {
 			tags[*tag.Tag.Key] = *tag.Tag.Value
 		}
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{clusterArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, clusterArn)
 	}
 	return rows
 }

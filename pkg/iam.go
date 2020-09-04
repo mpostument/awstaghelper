@@ -42,12 +42,7 @@ func ParseIamUserTags(tagsToRead string, client iamiface.IAMAPI) [][]string {
 		for _, tag := range userTags.Tags {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*user.UserName}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *user.UserName)
 	}
 	return rows
 }
@@ -95,7 +90,7 @@ func getIamRoles(client iamiface.IAMAPI) []*iam.Role {
 // ParseIamRolesTags parse output from getIamRoles and return roles and specified tags.
 func ParseIamRolesTags(tagsToRead string, client iamiface.IAMAPI) [][]string {
 	usersList := getIamRoles(client)
-	rows := addHeaders(tagsToRead, "RoleName")
+	rows := addHeadersToCsv(tagsToRead, "RoleName")
 	for _, role := range usersList {
 		roleTags, err := client.ListRoleTags(&iam.ListRoleTagsInput{RoleName: role.RoleName})
 		if err != nil {
@@ -105,12 +100,7 @@ func ParseIamRolesTags(tagsToRead string, client iamiface.IAMAPI) [][]string {
 		for _, tag := range roleTags.Tags {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*role.RoleName}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *role.RoleName)
 	}
 	return rows
 }
