@@ -2,15 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
+	"log"
 )
 
 // getRedshiftInstances return all redshift instances from specified region
@@ -39,11 +36,7 @@ func ParseRedshiftTags(tagsToRead string, client redshiftiface.RedshiftAPI, stsC
 	if err != nil {
 		log.Fatal("Not able to get account id", err)
 	}
-
-	var rows [][]string
-	headers := []string{"Arn"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, redshiftInstances := range instancesOutput {
 		clusterArn := fmt.Sprintf("arn:aws:redshift:%s:%s:cluster:%s",
 			region, *callerIdentity.Account, *redshiftInstances.ClusterIdentifier)
@@ -55,19 +48,15 @@ func ParseRedshiftTags(tagsToRead string, client redshiftiface.RedshiftAPI, stsC
 		for _, tag := range redshiftTags.TaggedResources {
 			tags[*tag.Tag.Key] = *tag.Tag.Value
 		}
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{clusterArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, clusterArn)
 	}
 	return rows
 }
 
 // TagRedShift tag rds instances. Take as input data from csv file. Where first column arn
 func TagRedShift(csvData [][]string, client redshiftiface.RedshiftAPI) {
-	var tags []*redshift.Tag
 	for r := 1; r < len(csvData); r++ {
+		var tags []*redshift.Tag
 		for c := 1; c < len(csvData[0]); c++ {
 			tags = append(tags, &redshift.Tag{
 				Key:   &csvData[0][c],
@@ -81,15 +70,7 @@ func TagRedShift(csvData [][]string, client redshiftiface.RedshiftAPI) {
 		}
 
 		_, err := client.CreateTags(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}

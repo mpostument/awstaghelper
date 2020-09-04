@@ -2,15 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
+	"log"
 )
 
 // getCWAlarm return all CloudWatch alarms from specified region
@@ -34,10 +31,7 @@ func getCWAlarm(client cloudwatchiface.CloudWatchAPI) []*cloudwatch.MetricAlarm 
 // ParseCwAlarmTags parse output from getCWAlarm and return alarm arn and specified tags.
 func ParseCwAlarmTags(tagsToRead string, client cloudwatchiface.CloudWatchAPI) [][]string {
 	instancesOutput := getCWAlarm(client)
-	var rows [][]string
-	headers := []string{"Arn"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, alarm := range instancesOutput {
 
 		input := &cloudwatch.ListTagsForResourceInput{
@@ -51,12 +45,7 @@ func ParseCwAlarmTags(tagsToRead string, client cloudwatchiface.CloudWatchAPI) [
 		for _, tag := range cwLogTags.Tags {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*alarm.AlarmArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *alarm.AlarmArn)
 	}
 	return rows
 }
@@ -82,10 +71,7 @@ func getCWLogGroups(client cloudwatchlogsiface.CloudWatchLogsAPI) []*cloudwatchl
 // ParseCwLogGroupTags parse output from getInstances and return logGroupName and specified tags.
 func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatchLogsAPI) [][]string {
 	instancesOutput := getCWLogGroups(client)
-	var rows [][]string
-	headers := []string{"LogGroupName"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeadersToCsv(tagsToRead, "LogGroupName")
 	for _, logGroup := range instancesOutput {
 
 		input := &cloudwatchlogs.ListTagsLogGroupInput{
@@ -99,20 +85,15 @@ func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatc
 		for key, value := range cwLogTags.Tags {
 			tags[key] = *value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*logGroup.LogGroupName}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *logGroup.LogGroupName)
 	}
 	return rows
 }
 
 // TagCloudWatchAlarm tag cloudwatch alarms. Take as input data from csv file. Where first column Arn
 func TagCloudWatchAlarm(csvData [][]string, client cloudwatchiface.CloudWatchAPI) {
-	var tags []*cloudwatch.Tag
 	for r := 1; r < len(csvData); r++ {
+		var tags []*cloudwatch.Tag
 		for c := 1; c < len(csvData[0]); c++ {
 			tags = append(tags, &cloudwatch.Tag{
 				Key:   &csvData[0][c],
@@ -126,15 +107,7 @@ func TagCloudWatchAlarm(csvData [][]string, client cloudwatchiface.CloudWatchAPI
 		}
 
 		_, err := client.TagResource(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}
@@ -142,9 +115,8 @@ func TagCloudWatchAlarm(csvData [][]string, client cloudwatchiface.CloudWatchAPI
 
 // TagCloudWatchLogGroups tag cloudwatch log groups. Take as input data from csv file. Where first column LogGroupName
 func TagCloudWatchLogGroups(csvData [][]string, client cloudwatchlogsiface.CloudWatchLogsAPI) {
-
-	tags := make(map[string]*string)
 	for r := 1; r < len(csvData); r++ {
+		tags := make(map[string]*string)
 		for c := 1; c < len(csvData[0]); c++ {
 			tags[csvData[0][c]] = &csvData[r][c]
 		}
@@ -155,15 +127,7 @@ func TagCloudWatchLogGroups(csvData [][]string, client cloudwatchlogsiface.Cloud
 		}
 
 		_, err := client.TagLogGroup(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}

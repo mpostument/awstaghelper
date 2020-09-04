@@ -2,13 +2,10 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elbv2"
 	"github.com/aws/aws-sdk-go/service/elbv2/elbv2iface"
+	"log"
 )
 
 // getElbV2 return all elbv2 (application and network) instances from specified region
@@ -32,10 +29,7 @@ func getElbV2(client elbv2iface.ELBV2API) []*elbv2.LoadBalancer {
 // ParseElbV2Tags parse output from getInstances and return instances id and specified tags.
 func ParseElbV2Tags(tagsToRead string, client elbv2iface.ELBV2API) [][]string {
 	instancesOutput := getElbV2(client)
-	var rows [][]string
-	headers := []string{"Arn"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, elb := range instancesOutput {
 		elbTags, err := client.DescribeTags(&elbv2.DescribeTagsInput{ResourceArns: []*string{elb.LoadBalancerArn}})
 		if err != nil {
@@ -47,21 +41,15 @@ func ParseElbV2Tags(tagsToRead string, client elbv2iface.ELBV2API) [][]string {
 				tags[*tag.Key] = *tag.Value
 			}
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*elb.LoadBalancerArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *elb.LoadBalancerArn)
 	}
 	return rows
 }
 
 // TagElbV2 tag elbv2(application and network). Take as input data from csv file. Where first column id
 func TagElbV2(csvData [][]string, client elbv2iface.ELBV2API) {
-
-	var tags []*elbv2.Tag
 	for r := 1; r < len(csvData); r++ {
+		var tags []*elbv2.Tag
 		for c := 1; c < len(csvData[0]); c++ {
 			tags = append(tags, &elbv2.Tag{
 				Key:   &csvData[0][c],
@@ -75,15 +63,7 @@ func TagElbV2(csvData [][]string, client elbv2iface.ELBV2API) {
 		}
 
 		_, err := client.AddTags(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}

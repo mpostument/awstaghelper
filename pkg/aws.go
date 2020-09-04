@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -21,4 +22,19 @@ func GetSession(region string, profile string) *session.Session {
 	}
 
 	return sess
+}
+
+func awsErrorHandle(err error) bool {
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			default:
+				fmt.Println(aerr.Error())
+			}
+		} else {
+			fmt.Println(err.Error())
+		}
+		return true
+	}
+	return false
 }

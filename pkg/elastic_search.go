@@ -2,15 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice/elasticsearchserviceiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
+	"log"
 )
 
 // getElasticSearchDomains return all elasticsearch from specified region
@@ -31,10 +28,7 @@ func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.
 	if err != nil {
 		log.Fatal("Not able to get account id", err)
 	}
-	var rows [][]string
-	headers := []string{"Arn"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, elasticCacheInstance := range instancesOutput.DomainNames {
 
 		clusterArn := fmt.Sprintf("arn:aws:es:%s:%s:domain/%s",
@@ -51,21 +45,15 @@ func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.
 		for _, tag := range elasticSearchTags.TagList {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{clusterArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, clusterArn)
 	}
 	return rows
 }
 
 // TagElasticSearch tag instances. Take as input data from csv file. Where first column id
 func TagElasticSearch(csvData [][]string, client elasticsearchserviceiface.ElasticsearchServiceAPI) {
-
-	var tags []*elasticsearchservice.Tag
 	for r := 1; r < len(csvData); r++ {
+		var tags []*elasticsearchservice.Tag
 		for c := 1; c < len(csvData[0]); c++ {
 			tags = append(tags, &elasticsearchservice.Tag{
 				Key:   &csvData[0][c],
@@ -79,15 +67,7 @@ func TagElasticSearch(csvData [][]string, client elasticsearchserviceiface.Elast
 		}
 
 		_, err := client.AddTags(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}

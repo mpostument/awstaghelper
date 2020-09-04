@@ -2,13 +2,10 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cloudfront"
 	"github.com/aws/aws-sdk-go/service/cloudfront/cloudfrontiface"
+	"log"
 )
 
 // getDistributions return all cloudfront distributions from specified region
@@ -26,10 +23,7 @@ func getDistributions(client cloudfrontiface.CloudFrontAPI) *cloudfront.ListDist
 // ParseDistributionsTags parse output from getDistributions and return distribution arn and specified tags.
 func ParseDistributionsTags(tagsToRead string, client cloudfrontiface.CloudFrontAPI) [][]string {
 	instancesOutput := getDistributions(client)
-	var rows [][]string
-	headers := []string{"Arn"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, distribution := range instancesOutput.DistributionList.Items {
 
 		input := &cloudfront.ListTagsForResourceInput{
@@ -43,20 +37,15 @@ func ParseDistributionsTags(tagsToRead string, client cloudfrontiface.CloudFront
 		for _, tag := range distributionTags.Tags.Items {
 			tags[*tag.Key] = *tag.Value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*distribution.ARN}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *distribution.ARN)
 	}
 	return rows
 }
 
 // TagDistribution tag cloudfront distribution. Take as input data from csv file. Where first column Arn
 func TagDistribution(csvData [][]string, client cloudfrontiface.CloudFrontAPI) {
-	var tags cloudfront.Tags
 	for r := 1; r < len(csvData); r++ {
+		var tags cloudfront.Tags
 		for c := 1; c < len(csvData[0]); c++ {
 			tags.Items = append(tags.Items, &cloudfront.Tag{
 				Key:   &csvData[0][c],
@@ -70,15 +59,7 @@ func TagDistribution(csvData [][]string, client cloudfrontiface.CloudFrontAPI) {
 		}
 
 		_, err := client.TagResource(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}

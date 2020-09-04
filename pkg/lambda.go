@@ -2,13 +2,10 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
+	"log"
 )
 
 // getLambdaFunctions return all lambdas from specified region
@@ -32,10 +29,7 @@ func getLambdaFunctions(client lambdaiface.LambdaAPI) []*lambda.FunctionConfigur
 // ParseLambdaFunctionTags parse output from getLambdaFunctions and return arn and specified tags.
 func ParseLambdaFunctionTags(tagsToRead string, client lambdaiface.LambdaAPI) [][]string {
 	instancesOutput := getLambdaFunctions(client)
-	var rows [][]string
-	headers := []string{"Arn"}
-	headers = append(headers, strings.Split(tagsToRead, ",")...)
-	rows = append(rows, headers)
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, lambdaOutput := range instancesOutput {
 		lambdaTags, err := client.ListTags(&lambda.ListTagsInput{Resource: lambdaOutput.FunctionArn})
 		if err != nil {
@@ -45,21 +39,15 @@ func ParseLambdaFunctionTags(tagsToRead string, client lambdaiface.LambdaAPI) []
 		for key, value := range lambdaTags.Tags {
 			tags[key] = *value
 		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
-		}
-		rows = append(rows, append([]string{*lambdaOutput.FunctionArn}, resultTags...))
+		rows = addTagsToCsv(tagsToRead, tags, rows, *lambdaOutput.FunctionArn)
 	}
 	return rows
 }
 
 // TagLambda tag instances. Take as input data from csv file. Where first column id
 func TagLambda(csvData [][]string, client lambdaiface.LambdaAPI) {
-
-	tags := make(map[string]*string)
 	for r := 1; r < len(csvData); r++ {
+		tags := make(map[string]*string)
 		for c := 1; c < len(csvData[0]); c++ {
 			tags[csvData[0][c]] = &csvData[r][c]
 		}
@@ -70,15 +58,7 @@ func TagLambda(csvData [][]string, client lambdaiface.LambdaAPI) {
 		}
 
 		_, err := client.TagResource(input)
-		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				switch aerr.Code() {
-				default:
-					fmt.Println(aerr.Error())
-				}
-			} else {
-				fmt.Println(err.Error())
-			}
+		if awsErrorHandle(err) {
 			return
 		}
 	}
