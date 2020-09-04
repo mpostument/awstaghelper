@@ -2,12 +2,10 @@ package pkg
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elbv2"
 	"github.com/aws/aws-sdk-go/service/elbv2/elbv2iface"
+	"log"
 )
 
 // getElbV2 return all elbv2 (application and network) instances from specified region
@@ -42,11 +40,6 @@ func ParseElbV2Tags(tagsToRead string, client elbv2iface.ELBV2API) [][]string {
 			for _, tag := range tagsToWrite.Tags {
 				tags[*tag.Key] = *tag.Value
 			}
-		}
-
-		var resultTags []string
-		for _, key := range strings.Split(tagsToRead, ",") {
-			resultTags = append(resultTags, tags[key])
 		}
 		rows = addTagsToCsv(tagsToRead, tags, rows, *elb.LoadBalancerArn)
 	}
