@@ -2,10 +2,11 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/aws/aws-sdk-go/service/ecr/ecriface"
-	"log"
 )
 
 func getEcrRepositories(client ecriface.ECRAPI) []*ecr.Repository {
@@ -19,7 +20,7 @@ func getEcrRepositories(client ecriface.ECRAPI) []*ecr.Repository {
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get ecr repositories", err)
+		log.Fatal("Not able to get ecr repositories ", err)
 		return nil
 	}
 	return result
@@ -32,7 +33,7 @@ func ParseEcrRepositoriesTags(tagsToRead string, client ecriface.ECRAPI) [][]str
 	for _, repo := range repoList {
 		repoTags, err := client.ListTagsForResource(&ecr.ListTagsForResourceInput{ResourceArn: repo.RepositoryArn})
 		if err != nil {
-			fmt.Println("Not able to get ecr tags", err)
+			fmt.Println("Not able to get ecr tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range repoTags.Tags {

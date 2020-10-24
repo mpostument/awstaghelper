@@ -13,10 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+// Package cmd is the package for the CLI of awstaghelper
 package cmd
 
 import (
 	"awstaghelper/pkg"
+
 	"github.com/aws/aws-sdk-go/service/ecr"
 
 	"github.com/spf13/cobra"

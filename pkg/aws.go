@@ -2,12 +2,14 @@ package pkg
 
 import (
 	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws/awserr"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
+// GetSession retrieves the AWS session if possible
 func GetSession(region string, profile string) *session.Session {
 	sess, err := session.NewSessionWithOptions(session.Options{
 		Profile: profile,

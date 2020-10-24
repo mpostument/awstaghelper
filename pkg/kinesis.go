@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/aws/aws-sdk-go/service/firehose/firehoseiface"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/aws/aws-sdk-go/service/kinesis/kinesisiface"
-	"log"
 )
 
 // getFirehoses return all firehoses from specified region
@@ -21,7 +22,7 @@ func getFirehoses(client firehoseiface.FirehoseAPI) *firehose.ListDeliveryStream
 	return result
 }
 
-// ParseKinesisTags parse output from getFirehoses and return firehose name and specified tags.
+// ParseFirehoseTags parse output from getFirehoses and return firehose name and specified tags.
 func ParseFirehoseTags(tagsToRead string, client firehoseiface.FirehoseAPI) [][]string {
 	instancesOutput := getFirehoses(client)
 	rows := addHeadersToCsv(tagsToRead, "Name")

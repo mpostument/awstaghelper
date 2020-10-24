@@ -2,11 +2,12 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/iam/iamiface"
-	"log"
-	"strings"
 )
 
 func getIamUsers(client iamiface.IAMAPI) []*iam.User {
@@ -20,7 +21,7 @@ func getIamUsers(client iamiface.IAMAPI) []*iam.User {
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get iam users", err)
+		log.Fatal("Not able to get IAM users ", err)
 		return nil
 	}
 	return result
@@ -36,7 +37,7 @@ func ParseIamUserTags(tagsToRead string, client iamiface.IAMAPI) [][]string {
 	for _, user := range usersList {
 		userTags, err := client.ListUserTags(&iam.ListUserTagsInput{UserName: user.UserName})
 		if err != nil {
-			fmt.Println("Not able to get iam user tags", err)
+			fmt.Println("Not able to get IAM user tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range userTags.Tags {
@@ -81,7 +82,7 @@ func getIamRoles(client iamiface.IAMAPI) []*iam.Role {
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get iam roles", err)
+		log.Fatal("Not able to get IAM roles ", err)
 		return nil
 	}
 	return result

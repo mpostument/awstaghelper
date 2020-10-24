@@ -1,10 +1,11 @@
 package pkg
 
 import (
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
-	"log"
 )
 
 // getEC2Instances return all ec2 instances from specified region
@@ -19,7 +20,7 @@ func getEC2Instances(client ec2iface.EC2API) []*ec2.Reservation {
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get ec2 instances", err)
+		log.Fatal("Not able to get EC2 instances ", err)
 	}
 	return result
 }
