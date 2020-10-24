@@ -2,10 +2,11 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
-	"log"
 )
 
 // getLambdaFunctions return all lambdas from specified region
@@ -20,7 +21,7 @@ func getLambdaFunctions(client lambdaiface.LambdaAPI) []*lambda.FunctionConfigur
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get lambdas", err)
+		log.Fatal("Not able to get lambdas ", err)
 		return nil
 	}
 	return result
@@ -33,7 +34,7 @@ func ParseLambdaFunctionTags(tagsToRead string, client lambdaiface.LambdaAPI) []
 	for _, lambdaOutput := range instancesOutput {
 		lambdaTags, err := client.ListTags(&lambda.ListTagsInput{Resource: lambdaOutput.FunctionArn})
 		if err != nil {
-			fmt.Println("Not able to get lambda tags", err)
+			fmt.Println("Not able to get lambda tags ", err)
 		}
 		tags := map[string]string{}
 		for key, value := range lambdaTags.Tags {

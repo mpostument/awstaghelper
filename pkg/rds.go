@@ -2,10 +2,11 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/aws/aws-sdk-go/service/rds/rdsiface"
-	"log"
 )
 
 // getRDSInstances return all rds instances from specified region
@@ -33,7 +34,7 @@ func ParseRDSTags(tagsToRead string, client rdsiface.RDSAPI) [][]string {
 	for _, dbInstances := range instancesOutput {
 		rdsTags, err := client.ListTagsForResource(&rds.ListTagsForResourceInput{ResourceName: dbInstances.DBInstanceArn})
 		if err != nil {
-			fmt.Println("Not able to get rds tags", err)
+			fmt.Println("Not able to get rds tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range rdsTags.TagList {

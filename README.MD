@@ -1,6 +1,6 @@
-# Awstaghelper
+# AWSTagHelper
 
-### Painless AWS tagging
+## Painless AWS tagging
 
 Tags are critical to managing AWS resources at scale. Awstaghelper provides a command line tool to ease adding and managing tags to and from CSV files across the wide range of AWS resources.
 
@@ -10,6 +10,7 @@ Tags are critical to managing AWS resources at scale. Awstaghelper provides a co
 * [Installing](#installing)
 * [Getting Started](#getting-started)
   * [Ec2](#ec2)
+  * [Ec2 SecurityGroup](#ec2sg)
   * [Rds](#rds)
   * [Lambda](#lambda)
   * [S3](#s3)
@@ -53,6 +54,18 @@ Read csv and tag ec2 - `awstaghelper ec2 tag-ec2`
 Example:
  `awstaghelper ec2 tag-ec2 --filename ec2Tag.csv --profile main`  
 
+#### Get security group tags
+
+Get list of SGs with required tags - `awstaghelper ec2 get-sg-tags`  
+Example:
+ `awstaghelper ec2 get-sg-tags --filename sgTag.csv --tags Name,Owner --profile main`
+
+#### Tag security group
+
+Read csv and tag ec2 - `awstaghelper ec2 tag-sg`  
+Example:
+ `awstaghelper ec2 tag-sg --filename sgTag.csv --profile main`  
+
 ### Rds
 
 #### Get rds tags
@@ -94,7 +107,7 @@ Example:
 Read csv and tag s3 - `awstaghelper s3 tag-s3`  
 Example:
  `awstaghelper s3 tag-s3 --filename ec2Tag.csv --profile main`  
- 
+
 ### Elasticache
 
 #### Get elasticache tags

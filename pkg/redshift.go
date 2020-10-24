@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
-	"log"
 )
 
 // getRedshiftInstances return all redshift instances from specified region
@@ -22,7 +23,7 @@ func getRedshiftInstances(client redshiftiface.RedshiftAPI) []*redshift.Cluster 
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get redshift instances", err)
+		log.Fatal("Not able to get redshift instances ", err)
 		return nil
 	}
 	return result
@@ -42,7 +43,7 @@ func ParseRedshiftTags(tagsToRead string, client redshiftiface.RedshiftAPI, stsC
 			region, *callerIdentity.Account, *redshiftInstances.ClusterIdentifier)
 		redshiftTags, err := client.DescribeTags(&redshift.DescribeTagsInput{ResourceName: &clusterArn})
 		if err != nil {
-			fmt.Println("Not able to get redshift tags", err)
+			fmt.Println("Not able to get redshift tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range redshiftTags.TaggedResources {

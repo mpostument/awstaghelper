@@ -2,11 +2,12 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
-	"log"
 )
 
 // getBuckets return all s3 buckets from specified region
@@ -15,7 +16,7 @@ func getBuckets(client s3iface.S3API) *s3.ListBucketsOutput {
 
 	result, err := client.ListBuckets(input)
 	if err != nil {
-		log.Fatal("Not able to get list of buckets", err)
+		log.Fatal("Not able to get list of S3 buckets ", err)
 	}
 
 	return result
@@ -33,7 +34,7 @@ func ParseS3Tags(tagsToRead string, client s3iface.S3API) [][]string {
 			} else if err.(awserr.Error).Code() == "AuthorizationHeaderMalformed" {
 				fmt.Println("Bucket ", *bucket.Name, "is not in your region", "region")
 			} else {
-				fmt.Println("Not able to get tags", err)
+				fmt.Println("Not able to get tags ", err)
 			}
 		}
 		tags := map[string]string{}

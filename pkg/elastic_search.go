@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice/elasticsearchserviceiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
-	"log"
 )
 
 // getElasticSearchDomains return all elasticsearch from specified region
@@ -16,7 +17,7 @@ func getElasticSearchDomains(client elasticsearchserviceiface.ElasticsearchServi
 
 	result, err := client.ListDomainNames(input)
 	if err != nil {
-		log.Fatal("Not able to get elasticsearch instances", err)
+		log.Fatal("Not able to get elasticsearch instances ", err)
 	}
 	return result
 }
@@ -26,7 +27,7 @@ func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.
 	instancesOutput := getElasticSearchDomains(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
-		log.Fatal("Not able to get account id", err)
+		log.Fatal("Not able to get account id ", err)
 	}
 	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, elasticCacheInstance := range instancesOutput.DomainNames {
@@ -39,7 +40,7 @@ func ParseElasticSearchTags(tagsToRead string, client elasticsearchserviceiface.
 		}
 		elasticSearchTags, err := client.ListTags(input)
 		if err != nil {
-			fmt.Println("Not able to get elasticsearch tags", err)
+			fmt.Println("Not able to get elasticsearch tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range elasticSearchTags.TagList {

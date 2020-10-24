@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticache"
 	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
-	"log"
 )
 
 // getElastiCacheClusters return all ElastiCache from specified region
@@ -22,7 +23,7 @@ func getElastiCacheClusters(client elasticacheiface.ElastiCacheAPI) []*elasticac
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get elasticache instances", err)
+		log.Fatal("Not able to get elasticache instances ", err)
 		return nil
 	}
 	return result
@@ -33,7 +34,7 @@ func ParseElastiCacheClusterTags(tagsToRead string, client elasticacheiface.Elas
 	instancesOutput := getElastiCacheClusters(client)
 	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if err != nil {
-		log.Fatal("Not able to get account id", err)
+		log.Fatal("Not able to get account id ", err)
 	}
 	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, elasticCacheInstance := range instancesOutput {
@@ -46,7 +47,7 @@ func ParseElastiCacheClusterTags(tagsToRead string, client elasticacheiface.Elas
 		}
 		elasticCacheTag, err := client.ListTagsForResource(input)
 		if err != nil {
-			fmt.Println("Not able to get elasticache tags", err)
+			fmt.Println("Not able to get elasticache tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range elasticCacheTag.TagList {

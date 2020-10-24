@@ -2,12 +2,13 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
-	"log"
 )
 
 // getCWAlarm return all CloudWatch alarms from specified region
@@ -22,7 +23,7 @@ func getCWAlarm(client cloudwatchiface.CloudWatchAPI) []*cloudwatch.MetricAlarm 
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get alarms", err)
+		log.Fatal("Not able to get alarms ", err)
 		return nil
 	}
 	return result
@@ -39,7 +40,7 @@ func ParseCwAlarmTags(tagsToRead string, client cloudwatchiface.CloudWatchAPI) [
 		}
 		cwLogTags, err := client.ListTagsForResource(input)
 		if err != nil {
-			fmt.Println("Not able to get alarm tags", err)
+			fmt.Println("Not able to get alarm tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range cwLogTags.Tags {
@@ -62,7 +63,7 @@ func getCWLogGroups(client cloudwatchlogsiface.CloudWatchLogsAPI) []*cloudwatchl
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get log groups", err)
+		log.Fatal("Not able to get log groups ", err)
 		return nil
 	}
 	return result
@@ -79,7 +80,7 @@ func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatc
 		}
 		cwLogTags, err := client.ListTagsLogGroup(input)
 		if err != nil {
-			fmt.Println("Not able to get log group tags", err)
+			fmt.Println("Not able to get log group tags ", err)
 		}
 		tags := map[string]string{}
 		for key, value := range cwLogTags.Tags {

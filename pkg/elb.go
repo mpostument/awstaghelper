@@ -2,10 +2,11 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elbv2"
 	"github.com/aws/aws-sdk-go/service/elbv2/elbv2iface"
-	"log"
 )
 
 // getElbV2 return all elbv2 (application and network) instances from specified region
@@ -20,7 +21,7 @@ func getElbV2(client elbv2iface.ELBV2API) []*elbv2.LoadBalancer {
 			return !lastPage
 		})
 	if err != nil {
-		log.Fatal("Not able to get load balancers", err)
+		log.Fatal("Not able to get load balancers ", err)
 		return nil
 	}
 	return result
@@ -33,7 +34,7 @@ func ParseElbV2Tags(tagsToRead string, client elbv2iface.ELBV2API) [][]string {
 	for _, elb := range instancesOutput {
 		elbTags, err := client.DescribeTags(&elbv2.DescribeTagsInput{ResourceArns: []*string{elb.LoadBalancerArn}})
 		if err != nil {
-			fmt.Println("Not able to get load balancer tags", err)
+			fmt.Println("Not able to get load balancer tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tagsToWrite := range elbTags.TagDescriptions {

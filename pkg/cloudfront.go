@@ -2,10 +2,11 @@ package pkg
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudfront"
 	"github.com/aws/aws-sdk-go/service/cloudfront/cloudfrontiface"
-	"log"
 )
 
 // getDistributions return all cloudfront distributions from specified region
@@ -14,7 +15,7 @@ func getDistributions(client cloudfrontiface.CloudFrontAPI) *cloudfront.ListDist
 
 	result, err := client.ListDistributions(input)
 	if err != nil {
-		log.Fatal("Not able to get distributions", err)
+		log.Fatal("Not able to get distributions ", err)
 		return nil
 	}
 	return result
@@ -31,7 +32,7 @@ func ParseDistributionsTags(tagsToRead string, client cloudfrontiface.CloudFront
 		}
 		distributionTags, err := client.ListTagsForResource(input)
 		if err != nil {
-			fmt.Println("Not able to get distributions tags", err)
+			fmt.Println("Not able to get distributions tags ", err)
 		}
 		tags := map[string]string{}
 		for _, tag := range distributionTags.Tags.Items {
