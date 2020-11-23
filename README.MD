@@ -26,6 +26,9 @@ Tags are critical to managing AWS resources at scale. Awstaghelper provides a co
   * [Kinesis Firehose](#kinesis-firehose)
   * [Iam User](#iam-user)
   * [Iam Role](#iam-role)
+  * [Elastic Beanstalk](#elastic-beanstalk)
+  * [ECR](#ecr)
+  * [ELBv2](#elbv2)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -272,9 +275,51 @@ Example:
 
 #### Tag role
 
-Read csv and tag iam user - `awstaghelper iam tag-role`  
+Read csv and tag iam role - `awstaghelper iam tag-role`  
 Example:
 `awstaghelper iam tag-role --filename roleTag.csv --profile main`  
+
+### Elastic Beanstalk
+
+#### Get elastic beanstalk tags
+
+Get list of elastic beanstalk environnement with required tags - `awstaghelper eb get-eb-tags`  
+Example:
+`awstaghelper eb get-eb-tags --filename ebTag.csv --tags Name,Owner --profile main`
+
+#### Tag elastic beanstalk environnement
+
+Read csv and tag elastic beanstalk environnement - `awstaghelper eb tag-eb`  
+Example:
+`awstaghelper eb tag-eb --filename ebTag.csv --profile main`  
+
+### ECR
+
+#### Get ecr tags
+
+Get list of ecr with required tags - `awstaghelper ecr get-repository-tags`  
+Example:
+`awstaghelper ecr get-repository-tags --filename ecrTag.csv --tags Name,Owner --profile main`
+
+#### Tag ecr
+
+Read csv and tag ecr - `awstaghelper ecr tag-repository`  
+Example:
+`awstaghelper ecr tag-repository --filename ecrTag.csv --profile main`  
+
+### ELBv2
+
+#### Get elbv2 tags
+
+Get list of elbv2 with required tags - `awstaghelper elb get-elbv2-tags`  
+Example:
+`awstaghelper elb get-elbv2-tags --filename elbv2Tag.csv --tags Name,Owner --profile main`
+
+#### Tag elbv2
+
+Read csv and tag elbv2 - `awstaghelper elb tag-elbv2`  
+Example:
+`awstaghelper elb tag-elbv2 --filename elbv2Tag.csv --profile main`  
 
 ## Global parameters
 
