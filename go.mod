@@ -1,4 +1,4 @@
-module awstaghelper
+module github.com/mpostument/awstaghelper
 
 go 1.15
 

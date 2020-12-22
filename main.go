@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "awstaghelper/cmd"
+import "github.com/mpostument/awstaghelper/cmd"
 
 func main() {
 	cmd.Execute()

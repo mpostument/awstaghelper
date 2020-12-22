@@ -18,8 +18,8 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/pkg"
 	"github.com/aws/aws-sdk-go/service/elasticbeanstalk"
+	"github.com/mpostument/awstaghelper/pkg"
 
 	"github.com/spf13/cobra"
 )

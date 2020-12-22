@@ -18,8 +18,9 @@ limitations under the License.
 package cmd
 
 import (
-	"awstaghelper/pkg"
 	"fmt"
+
+	"github.com/mpostument/awstaghelper/pkg"
 
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/aws/aws-sdk-go/service/sts"
