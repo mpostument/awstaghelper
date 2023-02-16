@@ -306,6 +306,22 @@ Read csv and tag ecr - `awstaghelper ecr tag-repository`
 Example:
 `awstaghelper ecr tag-repository --filename ecrTag.csv --profile main`  
 
+### AutoScaling groups
+
+#### Get ASG tags
+
+Get list of ASGs with required tags - `awstaghelper asg get-asg-tags`
+
+Example:
+`awstaghelper asg get-asg-tags --filename asgTags.csv --tags Name,Owner --profile main`
+
+#### Tag ASGs
+
+Read csv and tag ASGs - `awstaghelper asg tag-asg`
+
+Example:
+`awstaghelper asg tag-asg --filename asgTags.csv --profile main`
+
 ## Global parameters
 
 `filename` - path where to write or read data. Supported by every option. Default `awsTags.csv`  
