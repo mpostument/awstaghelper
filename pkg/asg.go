@@ -47,12 +47,31 @@ func TagASG(csvData [][]string, client autoscalingiface.AutoScalingAPI) {
 	for r := 1; r < len(csvData); r++ {
 		var tags []*autoscaling.Tag
 		for c := 1; c < len(csvData[0]); c++ {
-			val := strings.Split(csvData[r][c], "|Propagate=")[0]
-			propagate, _ := strconv.ParseBool(strings.Split(csvData[r][c], "|Propagate=")[1])
+			val := strings.Split(csvData[r][c], "|Propagate=")
+			var propagate bool
+			var err error
+
+			switch len(val) {
+			case 1:
+				{
+					propagate = true
+				}
+			case 2:
+				{
+					propagate, err = strconv.ParseBool(val[1])
+					if err != nil {
+						propagate = true
+					}
+				}
+			default:
+				{
+					log.Printf("Invalid CSV format: %v", csvData[r][c])
+				}
+			}
 
 			tags = append(tags, &autoscaling.Tag{
 				Key:               &csvData[0][c],
-				Value:             &val,
+				Value:             &val[0],
 				PropagateAtLaunch: &propagate,
 				ResourceId:        &csvData[r][0],
 				ResourceType:      aws.String("auto-scaling-group"),
