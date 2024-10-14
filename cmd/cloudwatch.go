@@ -22,7 +22,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
-	"github.com/spf13/cobra"
+	"github.com/aws/aws-sdk-go/service/sts"
+    "github.com/spf13/cobra"
 )
 
 // cloudwatchCmd represents the cloudwatch command
@@ -49,7 +50,8 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := cloudwatchlogs.New(sess)
-		pkg.WriteCsv(pkg.ParseCwLogGroupTags(tags, client), filename)
+		stsClient := sts.New(sess)
+		pkg.WriteCsv(pkg.ParseCwLogGroupTags(tags, client, stsClient, region), filename)
 	},
 }
 
