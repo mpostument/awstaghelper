@@ -23,7 +23,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/sts"
-    "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 // cloudwatchCmd represents the cloudwatch command

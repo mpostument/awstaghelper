@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
 	"github.com/aws/aws-sdk-go/service/sts"
-    "github.com/aws/aws-sdk-go/service/sts/stsiface"
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 )
 
 // getCWAlarm return all CloudWatch alarms from specified region
@@ -74,16 +74,16 @@ func getCWLogGroups(client cloudwatchlogsiface.CloudWatchLogsAPI) []*cloudwatchl
 // ParseCwLogGroupTags parse output from getInstances and return Arn and specified tags.
 func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatchLogsAPI, stsClient stsiface.STSAPI, region string) [][]string {
 	instancesOutput := getCWLogGroups(client)
-    callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
-    if err != nil {
-        log.Fatal("Not able to get account id", err)
-    }
-    rows := addHeadersToCsv(tagsToRead, "Arn")
+	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	if err != nil {
+		log.Fatal("Not able to get account id", err)
+	}
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, logGroup := range instancesOutput {
-        logGroupArn := fmt.Sprintf("arn:aws:logs:%s:%s:log-group:%s", region, *callerIdentity.Account, *logGroup.LogGroupName)
-        input := &cloudwatchlogs.ListTagsForResourceInput{
-            ResourceArn: aws.String(logGroupArn),
-        }
+		logGroupArn := fmt.Sprintf("arn:aws:logs:%s:%s:log-group:%s", region, *callerIdentity.Account, *logGroup.LogGroupName)
+		input := &cloudwatchlogs.ListTagsForResourceInput{
+			ResourceArn: aws.String(logGroupArn),
+		}
 		cwLogTags, err := client.ListTagsForResource(input)
 		if err != nil {
 			fmt.Println("Not able to get log group tags ", err)

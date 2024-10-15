@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
-    "github.com/aws/aws-sdk-go/service/sts"
-    "github.com/aws/aws-sdk-go/service/sts/stsiface"
+	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -141,8 +141,8 @@ func TestParseCwLogGroupTags(t *testing.T) {
 	}
 
 	expectedResult := [][]string{
-        {"Arn", "Name", "Owner"},
-        {"arn:aws:logs:us-east-1:666666666:log-group:test-log-group", "test-log-group", "mpostument"},
+		{"Arn", "Name", "Owner"},
+		{"arn:aws:logs:us-east-1:666666666:log-group:test-log-group", "test-log-group", "mpostument"},
 	}
 
 	for _, c := range cases {
