@@ -9,6 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
+	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 )
 
 // getCWAlarm return all CloudWatch alarms from specified region
@@ -69,16 +71,20 @@ func getCWLogGroups(client cloudwatchlogsiface.CloudWatchLogsAPI) []*cloudwatchl
 	return result
 }
 
-// ParseCwLogGroupTags parse output from getInstances and return logGroupName and specified tags.
-func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatchLogsAPI) [][]string {
+// ParseCwLogGroupTags parse output from getInstances and return Arn and specified tags.
+func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatchLogsAPI, stsClient stsiface.STSAPI, region string) [][]string {
 	instancesOutput := getCWLogGroups(client)
-	rows := addHeadersToCsv(tagsToRead, "LogGroupName")
+	callerIdentity, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	if err != nil {
+		log.Fatal("Not able to get account id", err)
+	}
+	rows := addHeadersToCsv(tagsToRead, "Arn")
 	for _, logGroup := range instancesOutput {
-
-		input := &cloudwatchlogs.ListTagsLogGroupInput{
-			LogGroupName: logGroup.LogGroupName,
+		logGroupArn := fmt.Sprintf("arn:aws:logs:%s:%s:log-group:%s", region, *callerIdentity.Account, *logGroup.LogGroupName)
+		input := &cloudwatchlogs.ListTagsForResourceInput{
+			ResourceArn: aws.String(logGroupArn),
 		}
-		cwLogTags, err := client.ListTagsLogGroup(input)
+		cwLogTags, err := client.ListTagsForResource(input)
 		if err != nil {
 			fmt.Println("Not able to get log group tags ", err)
 		}
@@ -86,7 +92,7 @@ func ParseCwLogGroupTags(tagsToRead string, client cloudwatchlogsiface.CloudWatc
 		for key, value := range cwLogTags.Tags {
 			tags[key] = *value
 		}
-		rows = addTagsToCsv(tagsToRead, tags, rows, *logGroup.LogGroupName)
+		rows = addTagsToCsv(tagsToRead, tags, rows, logGroupArn)
 	}
 	return rows
 }
@@ -114,7 +120,7 @@ func TagCloudWatchAlarm(csvData [][]string, client cloudwatchiface.CloudWatchAPI
 	}
 }
 
-// TagCloudWatchLogGroups tag cloudwatch log groups. Take as input data from csv file. Where first column LogGroupName
+// TagCloudWatchLogGroups tag cloudwatch log groups. Take as input data from csv file. Where first column Arn
 func TagCloudWatchLogGroups(csvData [][]string, client cloudwatchlogsiface.CloudWatchLogsAPI) {
 	for r := 1; r < len(csvData); r++ {
 		tags := make(map[string]*string)
@@ -122,12 +128,12 @@ func TagCloudWatchLogGroups(csvData [][]string, client cloudwatchlogsiface.Cloud
 			tags[csvData[0][c]] = &csvData[r][c]
 		}
 
-		input := &cloudwatchlogs.TagLogGroupInput{
-			LogGroupName: aws.String(csvData[r][0]),
-			Tags:         tags,
+		input := &cloudwatchlogs.TagResourceInput{
+			ResourceArn: aws.String(csvData[r][0]),
+			Tags:        tags,
 		}
 
-		_, err := client.TagLogGroup(input)
+		_, err := client.TagResource(input)
 		if awsErrorHandle(err) {
 			return
 		}

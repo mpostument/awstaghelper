@@ -8,6 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
+	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -91,8 +93,10 @@ var listCloudWatchAlarmsResp = cloudwatch.ListTagsForResourceOutput{
 
 type mockedCloudWatchLog struct {
 	cloudwatchlogsiface.CloudWatchLogsAPI
-	respDescribeLogGroups cloudwatchlogs.DescribeLogGroupsOutput
-	respListTagsLogGroup  cloudwatchlogs.ListTagsLogGroupOutput
+	stsiface.STSAPI
+	respDescribeLogGroups   cloudwatchlogs.DescribeLogGroupsOutput
+	respGetCallerIdentity   sts.GetCallerIdentityOutput
+	respListTagsForResource cloudwatchlogs.ListTagsForResourceOutput
 }
 
 func (m *mockedCloudWatchLog) DescribeLogGroupsPages(input *cloudwatchlogs.DescribeLogGroupsInput, pageFunc func(*cloudwatchlogs.DescribeLogGroupsOutput, bool) bool) error {
@@ -100,8 +104,12 @@ func (m *mockedCloudWatchLog) DescribeLogGroupsPages(input *cloudwatchlogs.Descr
 	return nil
 }
 
-func (m *mockedCloudWatchLog) ListTagsLogGroup(*cloudwatchlogs.ListTagsLogGroupInput) (*cloudwatchlogs.ListTagsLogGroupOutput, error) {
-	return &m.respListTagsLogGroup, nil
+func (m *mockedCloudWatchLog) GetCallerIdentity(*sts.GetCallerIdentityInput) (*sts.GetCallerIdentityOutput, error) {
+	return &m.respGetCallerIdentity, nil
+}
+
+func (m *mockedCloudWatchLog) ListTagsForResource(*cloudwatchlogs.ListTagsForResourceInput) (*cloudwatchlogs.ListTagsForResourceOutput, error) {
+	return &m.respListTagsForResource, nil
 }
 
 func TestGetCWLogGroups(t *testing.T) {
@@ -126,19 +134,20 @@ func TestGetCWLogGroups(t *testing.T) {
 func TestParseCwLogGroupTags(t *testing.T) {
 	cases := []*mockedCloudWatchLog{
 		{
-			respDescribeLogGroups: describeCloudWatchLogGroupsResponse,
-			respListTagsLogGroup:  listCloudWatchLogsTagResponse,
+			respDescribeLogGroups:   describeCloudWatchLogGroupsResponse,
+			respGetCallerIdentity:   getCloudWatchCallerIdentityResponse,
+			respListTagsForResource: listCloudWatchLogsTagResponse,
 		},
 	}
 
 	expectedResult := [][]string{
-		{"LogGroupName", "Name", "Owner"},
-		{"test-log-group", "test-log-group", "mpostument"},
+		{"Arn", "Name", "Owner"},
+		{"arn:aws:logs:us-east-1:666666666:log-group:test-log-group", "test-log-group", "mpostument"},
 	}
 
 	for _, c := range cases {
 		t.Run("ParseCwLogGroupTags", func(t *testing.T) {
-			result := ParseCwLogGroupTags("Name,Owner", c)
+			result := ParseCwLogGroupTags("Name,Owner", c, c, "us-east-1")
 			assertions := assert.New(t)
 			assertions.EqualValues(expectedResult, result)
 		})
@@ -154,7 +163,11 @@ var describeCloudWatchLogGroupsResponse = cloudwatchlogs.DescribeLogGroupsOutput
 	},
 }
 
-var listCloudWatchLogsTagResponse = cloudwatchlogs.ListTagsLogGroupOutput{
+var getCloudWatchCallerIdentityResponse = sts.GetCallerIdentityOutput{
+	Account: aws.String("666666666"),
+}
+
+var listCloudWatchLogsTagResponse = cloudwatchlogs.ListTagsForResourceOutput{
 	Tags: map[string]*string{
 		"Name":  aws.String("test-log-group"),
 		"Owner": aws.String("mpostument"),
