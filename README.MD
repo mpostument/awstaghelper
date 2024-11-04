@@ -30,6 +30,8 @@ Tags are critical to managing AWS resources at scale. Awstaghelper provides a co
   * [ECR](#ecr)
   * [AutoScaling groups](#autoscaling-groups)
   * [EBS Volumes](#ebs-volumes)
+  * [WAFV2 CloudFront WebACL](#wafv2-cloudfront-webacl)
+  * [WAFV2 Regional WebACL](#wafv2-regional-webacl)
 * [Global parameters](#global-parameters)
 * [Contributing](#contributing)
 * [License](#license)
@@ -339,6 +341,38 @@ Read csv and tag EBS volumes - `awstaghelper ebs tag-ebs`
 
 Example:
 `awstaghelper ebs tag-ebs --filename ebsTags.csv --profile main`
+
+### WAFV2 CloudFront WebACL
+
+#### Get wafv2 cloudfront webacl tags
+
+Get list of wafv2 cloudfront webacl with required tags - `awstaghelper wafv2 get-cfwebacl-tags`
+
+Example:
+`awstaghelper wafv2 get-cfwebacl-tags --filename cfwebaclTags.csv --tags Name,Owner --profile main`
+
+#### Tag wafv2 cloudfront webacl
+
+Read csv and tag wafv2 cloudfront webacl - `awstaghelper wafv2 tag-cfwebacl`
+
+Example:
+`awstaghelper wafv2 tag-cfwebacl --filename cfwebaclTags.csv --profile main`
+
+### WAFV2 Regional WebACL
+
+#### Get wafv2 regional webacl tags
+
+Get list of wafv2 regional webacl with required tags - `awstaghelper wafv2 get-webacl-tags`
+
+Example:
+`awstaghelper wafv2 get-webacl-tags --filename webaclTags.csv --tags Name,Owner --profile main`
+
+#### Tag wafv2 regional webacl
+
+Read csv and tag wafv2 regional webacl - `awstaghelper wafv2 tag-webacl`
+
+Example:
+`awstaghelper wafv2 tag-webacl --filename webaclTags.csv --profile main`
 
 ## Global parameters
 
