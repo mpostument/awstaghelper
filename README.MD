@@ -72,6 +72,18 @@ Read csv and tag ec2 - `awstaghelper ec2 tag-sg`
 Example:
  `awstaghelper ec2 tag-sg --filename sgTag.csv --profile main`  
 
+#### Get snapshot tags
+
+Get list of SGs with required tags - `awstaghelper ec2 get-snapshot-tags`  
+Example:
+`awstaghelper ec2 get-snapshot-tags --filename snapshotTag.csv --tags Name,Owner --profile main`
+
+#### Tag snapshot
+
+Read csv and tag ec2 - `awstaghelper ec2 tag-snapshot`  
+Example:
+`awstaghelper ec2 tag-snapshot --filename snapshotTag.csv --profile main`
+
 ### Rds
 
 #### Get rds tags
