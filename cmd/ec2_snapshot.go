@@ -1,4 +1,5 @@
 /*
+Copyright © 2024 Jaemok Hong jaemokhong@lguplus.co.kr
 Copyright © 2020 Maksym Postument 777rip777@gmail.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,24 +22,15 @@ import (
 	"github.com/mpostument/awstaghelper/pkg"
 
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/spf13/cobra"
 )
 
-// ec2Cmd represents the ec2 command
-var ec2Cmd = &cobra.Command{
-	Use:   "ec2",
-	Short: "Root command for interaction with AWS ec2 services (ec2, security group, snapshot)",
-	Long:  `Root command for interaction with AWS ec2 services (ec2, security group, snapshot).`,
-	//Run: func(cmd *cobra.Command, args []string) {
-	//	fmt.Println("ec2 called")
-	//},
-}
-
-var getEc2Cmd = &cobra.Command{
-	Use:   "get-ec2-tags",
-	Short: "Write ec2 id and required tags to csv",
-	Long: `Write to csv data with ec2 id and required tags to csv. 
-This csv can be used with tag-ec2 command to tag aws environment.
+var getSnapshotCmd = &cobra.Command{
+	Use:   "get-snapshot-tags",
+	Short: "Write snapshot id and required tags to csv",
+	Long: `Write to csv data with snapshot id and required tags to csv.
+This csv can be used with tag-snapshot command to tag aws environment.
 Specify list of tags which should be read using tags flag: --tags Name,Env,Project.
 Csv filename can be specified with flag filename.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -48,14 +40,15 @@ Csv filename can be specified with flag filename.`,
 		region, _ := cmd.Flags().GetString("region")
 		sess := pkg.GetSession(region, profile)
 		client := ec2.New(sess)
-		pkg.WriteCsv(pkg.ParseEC2Tags(tags, client), filename)
+		stsClient := sts.New(sess)
+		pkg.WriteCsv(pkg.ParseSnapshotTags(tags, client, stsClient), filename)
 	},
 }
 
-var tagEc2Cmd = &cobra.Command{
-	Use:   "tag-ec2",
-	Short: "Read csv and tag ec2 with csv data",
-	Long:  `Read csv generated with get-ec2-tags command and tag ec2 instances with tags from csv.`,
+var tagSnapshotCmd = &cobra.Command{
+	Use:   "tag-snapshot",
+	Short: "Read csv and tag snapshot with csv data",
+	Long:  `Read csv generated with get-snapshot-tags command and tag snapshot resources with tags from csv.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		filename, _ := cmd.Flags().GetString("filename")
 		profile, _ := cmd.Flags().GetString("profile")
@@ -63,12 +56,11 @@ var tagEc2Cmd = &cobra.Command{
 		sess := pkg.GetSession(region, profile)
 		csvData := pkg.ReadCsv(filename)
 		client := ec2.New(sess)
-		pkg.TagEc2(csvData, client)
+		pkg.TagSnapshot(csvData, client)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(ec2Cmd)
-	ec2Cmd.AddCommand(getEc2Cmd)
-	ec2Cmd.AddCommand(tagEc2Cmd)
+	ec2Cmd.AddCommand(getSnapshotCmd)
+	ec2Cmd.AddCommand(tagSnapshotCmd)
 }
